@@ -1,3 +1,5 @@
+<img src="https://github.com/mitmadness/chuck/raw/master/chuck-logo.png" alt="chuck webservice logo" align="right">
+
 # chuck ![license](https://img.shields.io/github/license/mitmadness/chuck.svg?style=flat-square)
 
 chuck is a webservice that converts various 3D file-formats to Unity3D AssetBundles.
