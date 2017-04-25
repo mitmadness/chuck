@@ -1,4 +1,4 @@
-<img src="https://github.com/mitmadness/chuck/raw/master/chuck-logo.png" alt="chuck webservice logo" align="right">
+<img src="https://github.com/mitmadness/chuck/raw/master/chuck.png" alt="chuck webservice logo" align="right">
 
 # chuck ![license](https://img.shields.io/github/license/mitmadness/chuck.svg?style=flat-square)
 
