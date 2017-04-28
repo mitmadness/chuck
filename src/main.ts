@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import logger, { morganStreamWriter } from './logger';
 import { connectDatabase } from './mongoose';
+import api from './api';
 
 import './bootstrap';
 
@@ -30,7 +31,13 @@ const morganFormat = process.env.WEBPACK_ENV == 'production'
 app.use(morgan(morganFormat, { stream: morganStreamWriter }));
 
 //=> Decode JSON request bodies
-app.use(bodyParser.json());
+app.use(
+    bodyParser.json(),
+    bodyParser.urlencoded({ extended: true })
+);
+
+//=> Mount the API
+app.use('/api', api);
 
 //=> Start the HTTP server
 app.listen(port, () => {

@@ -6,14 +6,10 @@ export interface IApiKey {
     key: string;
 }
 
-export type IModelApiKey = IApiKey & Document;
+export type IApiKeyModel = IApiKey & Document;
 
 const ApiKeySchema = new Schema({
-    key: { type: String, unique: true, index: true }
+    key: { type: String, unique: true, index: true, default: () => uuid.v4() }
 });
 
-export const ApiKey = mongoose.model<IModelApiKey>('ApiKey', ApiKeySchema);
-
-export function generateApiKey(): IModelApiKey {
-    return new ApiKey({ key: uuid.v4() });
-}
+export const ApiKey = mongoose.model<IApiKeyModel>('ApiKey', ApiKeySchema);

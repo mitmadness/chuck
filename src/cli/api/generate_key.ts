@@ -1,14 +1,14 @@
 import { CommandModule } from 'yargs';
 import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
-import { generateApiKey } from '../../models/api_key';
+import { ApiKey } from '../../models';
 
 interface IArgs {
     save: boolean;
 }
 
 async function handler(args: IArgs): Promise<void> {
-    const key = generateApiKey();
+    const key = new ApiKey();
 
     logger.info(`Generated key: ${key.key}`);
 
