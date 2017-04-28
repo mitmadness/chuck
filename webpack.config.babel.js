@@ -9,7 +9,8 @@ const ENV_AGNOSTIC_CONFIG = {
     externals: [webpackNodeExternals()],
 
     entry: {
-        main: fromRoot('src/main.ts')
+        main: fromRoot('src/main.ts'),
+        cli: fromRoot('src/cli/index.ts')
     },
 
     output: {
