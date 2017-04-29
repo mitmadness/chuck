@@ -1,19 +1,31 @@
 import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
-import convertApi from './convert_api';
+import conversionsApi from './conversions_api';
+import logger from '../logger';
 
 const router = express.Router();
 
-router.use('/convert', convertApi);
+router.use('/conversions', conversionsApi);
 
 router.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    //=> Headers already sent, let Express handle the thing
     if (res.headersSent) {
         return next(err);
     }
 
-    res.status(500).json({ message: 'Fatal server error - please retry' });
+    //=> Mongoose validation errors
+    if (err.name === 'ValidationError') {
+        return res.status(400).json(err);
+    }
 
-    next(err);
+    //=> In all other cases, return a 500 error
+    res.status(500).json({
+        name: 'FatalError',
+        message: 'Fatal server error - please retry'
+    });
+
+    //=> Log it because that's unexpected
+    logger.error(err);
 });
 
 export default router;
