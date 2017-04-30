@@ -9,6 +9,12 @@ export abstract class HttpError extends Error {
     }
 }
 
+export class UnauthorizedError extends HttpError {
+    constructor(message: string = 'Access denied because of missing credentials in request') {
+        super(401, message, UnauthorizedError);
+    }
+}
+
 export class NotFoundError extends HttpError {
     constructor(message: string = 'Unable to find requested entity') {
         super(404, message, NotFoundError);
