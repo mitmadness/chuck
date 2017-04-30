@@ -19,6 +19,7 @@
     "@types/express": "^4.0.35",
     "@types/mongoose": "^4.7.11",
     "@types/morgan": "^1.7.32",
+    "@types/uuid": "^2.0.29",
     "@types/winston": "^2.3.1",
     "@types/yargs": "^6.6.0",
     "awesome-typescript-loader": "^3.1.2",
@@ -34,7 +35,6 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
-    "@types/uuid": "^2.0.29",
     "body-parser": "^1.17.1",
     "cors": "^2.8.3",
     "express": "^4.15.2",
