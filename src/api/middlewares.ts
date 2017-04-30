@@ -1,8 +1,8 @@
 import { ErrorRequestHandler, Handler, NextFunction, Request, Response } from 'express';
 import logger from '../logger';
-import { ApiKey } from '../models';
 import { HttpError, UnauthorizedError } from './http_errors';
 import { wrapAsync } from '../express_utils';
+import { isKeyValid } from './api_keys_cache';
 
 export function hasValidApiKey(): Handler {
     return wrapAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -12,9 +12,8 @@ export function hasValidApiKey(): Handler {
         }
 
         const apiKey = authHeader.split(' ')[1];
-        const apiKeyDocument = await ApiKey.findOne({ key: apiKey });
 
-        if (!apiKeyDocument) {
+        if (!await isKeyValid(apiKey)) {
             throw new UnauthorizedError(`The API key ${apiKey} does not seem to exist`);
         }
 

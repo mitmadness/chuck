@@ -14,7 +14,7 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
-    "lib": ["es2015"]
+    "lib": ["es7"]
   },
   "exclude": ["node_modules"]
 }
