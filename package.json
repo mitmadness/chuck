@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
+    "@types/bull": "^2.1.0",
     "@types/cors": "^2.8.1",
     "@types/express": "^4.0.35",
     "@types/mongoose": "^4.7.11",
@@ -36,10 +37,12 @@
   },
   "dependencies": {
     "body-parser": "^1.17.1",
+    "bull": "^2.2.6",
     "cors": "^2.8.3",
     "express": "^4.15.2",
     "mongoose": "^4.9.6",
     "morgan": "^1.8.1",
+    "toureiro": "^0.2.13",
     "uuid": "^3.0.1",
     "winston": "^2.3.1",
     "yargs": "^7.1.0"

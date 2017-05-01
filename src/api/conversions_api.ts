@@ -1,14 +1,17 @@
 import * as express from 'express';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
+import conversionsQueue from '../converter/conversions_queue';
 import { wrapAsync, safeOutData } from '../express_utils';
 import { NotFoundError } from './http_errors';
 import { hasValidApiKey } from './middlewares';
 
 const router = express.Router();
 
-router.post('/', hasValidApiKey, wrapAsync(async (req, res, next) => {
+router.post('/', hasValidApiKey(), wrapAsync(async (req, res, next) => {
     const conversionData = safeConversionData(req.body);
     const conversion = await Conversion.create(conversionData);
+
+    await conversionsQueue.add(conversion);
 
     res.status(202).json(safeOutData(conversion));
 

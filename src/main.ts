@@ -3,12 +3,21 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
+import * as toureiro from 'toureiro';
 import logger, { morganStreamWriter } from './logger';
 import { connectDatabase } from './mongoose';
 import api from './api';
+import conversionsQueue from './converter/conversions_queue';
 
 import './bootstrap';
 
+//=> Resume the conversions queue
+conversionsQueue.resume().catch((error) => {
+    logger.error(error.message);
+    process.exit(1);
+});
+
+//=> Create an Express app
 const app = express();
 const port = process.env.SERVER_PORT;
 
@@ -35,6 +44,9 @@ app.use(
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true })
 );
+
+//=> Mount Toureiro
+app.use('/toureiro', toureiro());
 
 //=> Mount the API
 app.use('/api', api);
