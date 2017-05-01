@@ -1,10 +1,8 @@
 import * as express from 'express';
 import conversionsApi from './conversions_api';
-import { errorHandler, hasValidApiKey } from './middlewares';
+import { errorHandler } from './middlewares';
 
 const router = express.Router();
-
-router.use(hasValidApiKey());
 
 router.use('/conversions', conversionsApi);
 

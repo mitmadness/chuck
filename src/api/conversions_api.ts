@@ -2,10 +2,11 @@ import * as express from 'express';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import { wrapAsync, safeOutData } from '../express_utils';
 import { NotFoundError } from './http_errors';
+import { hasValidApiKey } from './middlewares';
 
 const router = express.Router();
 
-router.post('/', wrapAsync(async (req, res, next) => {
+router.post('/', hasValidApiKey, wrapAsync(async (req, res, next) => {
     const conversionData = safeConversionData(req.body);
     const conversion = await Conversion.create(conversionData);
 
