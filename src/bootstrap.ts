@@ -5,6 +5,6 @@ import logger from './logger';
 dotenvx.load();
 
 process.on('unhandledRejection', (reason: any, promise: Promise<any>): void => {
-    logger.error(`UNHANDLED REJECTION: ${reason}`, promise);
+    logger.error('UNHANDLED REJECTION', reason, promise);
     process.exit(1);
 });
