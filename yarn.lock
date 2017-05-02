@@ -685,7 +685,7 @@ base64-js@^1.0.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.0.tgz#a39992d723584811982be5e290bb6a53d86700f1"
 
-basic-auth@~1.1.0:
+basic-auth@^1.0.4, basic-auth@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/basic-auth/-/basic-auth-1.1.0.tgz#45221ee429f7ee1e5035be3f51533f1cdfd29884"
 
@@ -1417,6 +1417,12 @@ expand-range@^1.8.1:
   resolved "https://registry.yarnpkg.com/expand-range/-/expand-range-1.8.2.tgz#a299effd335fe2721ebae8e257ec79644fc85337"
   dependencies:
     fill-range "^2.1.0"
+
+express-basic-auth@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/express-basic-auth/-/express-basic-auth-1.0.2.tgz#e4fc64cd4c8aa86fffda167197012abea10788b9"
+  dependencies:
+    basic-auth "^1.0.4"
 
 express@4.14.x:
   version "4.14.1"

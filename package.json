@@ -40,6 +40,7 @@
     "bull": "^2.2.6",
     "cors": "^2.8.3",
     "express": "^4.15.2",
+    "express-basic-auth": "^1.0.2",
     "mongoose": "^4.9.6",
     "morgan": "^1.8.1",
     "toureiro": "^0.2.13",
