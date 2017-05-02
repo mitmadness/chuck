@@ -1,6 +1,7 @@
 import * as os from 'os';
 import * as express from 'express';
 import * as cors from 'cors';
+import * as basicAuth from 'express-basic-auth';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as toureiro from 'toureiro';
@@ -46,7 +47,12 @@ app.use(
 );
 
 //=> Mount Toureiro
-app.use('/toureiro', toureiro());
+const toureiroAuth = basicAuth({
+    challenge: true,
+    users: { [process.env.TOUREIRO_USER]: process.env.TOUREIRO_PASSWORD }
+});
+
+app.use('/toureiro', toureiroAuth, toureiro());
 
 //=> Mount the API
 app.use('/api', api);
