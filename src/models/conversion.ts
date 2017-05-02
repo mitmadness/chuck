@@ -3,12 +3,17 @@ import { Document, Schema } from 'mongoose';
 import * as uuid from 'uuid';
 
 export interface IConversion {
+    code: string;
     assetBundleName: string;
     assetUrls: string[];
     azure: {
         account: string;
         key: string;
         container: string;
+    };
+    progress: {
+        completed: boolean;
+        step: string;
     };
 }
 
@@ -31,6 +36,11 @@ const ConversionSchema = new Schema({
         account: { type: String, required: true },
         key: { type: String, required: true },
         container: { type: String, required: true }
+    },
+
+    progress: {
+        completed: { type: Boolean, default: false },
+        step: { type: String, default: null }
     }
 });
 

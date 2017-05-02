@@ -1,6 +1,7 @@
 import * as queue from 'bull';
 import { Job } from 'bull';
 import logger from '../logger';
+import { Conversion } from '../models';
 import { IConversionJob } from './job';
 import steps from './steps';
 
@@ -8,17 +9,29 @@ const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().pr
 
 const conversionsQueue = queue('chuck-conversion-queue', process.env.REDIS_PORT, process.env.REDIS_HOST);
 
-conversionsQueue.process((job: IConversionJob) => {
+conversionsQueue.process(async (job: IConversionJob) => {
     sortedSteps.forEach(async (step) => {
         if (!step.shouldProcess(job)) return;
 
-        await job.progress({
-            type: 'orchestrator',
-            message: `Starting "${step.describe().name}"`,
-            step: step.describe()
+        const stepInfo = step.describe();
+
+        const updateState = Conversion.findOneAndUpdate({ code: job.data.code }, {
+            $set: { 'progress.step': stepInfo.code }
         });
 
+        const signalProgress = job.progress({
+            type: 'orchestrator',
+            message: `Starting "${stepInfo.name}"`,
+            step: stepInfo
+        });
+
+        await Promise.all([updateState, signalProgress]);
+
         await step.process(job);
+    });
+
+    await Conversion.findOneAndUpdate({ code: job.data.code }, {
+        $set: { 'progress.completed': true }
     });
 });
 
