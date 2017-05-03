@@ -11,9 +11,12 @@ export interface IConversion {
         key: string;
         container: string;
     };
-    progress: {
-        completed: boolean;
-        step: string;
+    conversion: {
+        jobId: string|null;
+        progress: {
+            completed: boolean;
+            step: string|null;
+        };
     };
 }
 
@@ -38,9 +41,12 @@ const ConversionSchema = new Schema({
         container: { type: String, required: true }
     },
 
-    progress: {
-        completed: { type: Boolean, default: false },
-        step: { type: String, default: null }
+    conversion: {
+        jobId: { type: String, default: null },
+        progress: {
+            completed: { type: Boolean, default: false },
+            step: { type: String, default: null }
+        }
     }
 });
 

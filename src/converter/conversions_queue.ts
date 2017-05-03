@@ -1,8 +1,7 @@
 import * as queue from 'bull';
 import { Job } from 'bull';
 import logger from '../logger';
-import { Conversion } from '../models';
-import { IConversionJob } from './job';
+import { IConversionJob, updateConversion } from './job';
 import steps from './steps';
 
 const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().priority);
@@ -10,14 +9,14 @@ const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().pr
 const conversionsQueue = queue('chuck-conversion-queue', process.env.REDIS_PORT, process.env.REDIS_HOST);
 
 conversionsQueue.process(async (job: IConversionJob) => {
+    await updateConversion(job, { 'conversion.jobId': job.jobId });
+
     sortedSteps.forEach(async (step) => {
         if (!step.shouldProcess(job)) return;
 
         const stepInfo = step.describe();
 
-        const updateState = Conversion.findOneAndUpdate({ code: job.data.code }, {
-            $set: { 'progress.step': stepInfo.code }
-        });
+        const updateState = updateConversion(job, { 'conversion.progress.step': stepInfo.code });
 
         const signalProgress = job.progress({
             type: 'orchestrator',
@@ -30,8 +29,9 @@ conversionsQueue.process(async (job: IConversionJob) => {
         await step.process(job);
     });
 
-    await Conversion.findOneAndUpdate({ code: job.data.code }, {
-        $set: { 'progress.completed': true }
+    await updateConversion(job, {
+        'conversion.progress.completed': true,
+        'conversion.progress.step': null
     });
 });
 
