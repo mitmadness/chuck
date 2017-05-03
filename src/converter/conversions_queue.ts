@@ -11,7 +11,7 @@ const conversionsQueue = queue('chuck-conversion-queue', process.env.REDIS_PORT,
 conversionsQueue.process(async (job: IConversionJob) => {
     await updateConversion(job, { 'conversion.jobId': job.jobId });
 
-    sortedSteps.forEach(async (step) => {
+    for (const step of sortedSteps) {
         if (!step.shouldProcess(job)) return;
 
         const stepInfo = step.describe();
@@ -27,7 +27,7 @@ conversionsQueue.process(async (job: IConversionJob) => {
         await Promise.all([updateState, signalProgress]);
 
         await step.process(job);
-    });
+    }
 
     await updateConversion(job, {
         'conversion.progress.completed': true,
