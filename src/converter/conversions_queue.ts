@@ -4,20 +4,27 @@ import logger from '../logger';
 import { IConversionJob, updateConversion } from './job';
 import steps from './steps';
 
+//=> Sort all steps with their declared priority
 const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().priority);
 
+//=> Initialize the Bull queue
 const conversionsQueue = queue('chuck-conversion-queue', process.env.REDIS_PORT, process.env.REDIS_HOST);
 
+//=> Initialize the job processor for the conversions queue
 conversionsQueue.process(async (job: IConversionJob) => {
+    //=> Set the jobId on the Conversion document
     await updateConversion(job, { 'conversion.jobId': job.jobId });
 
+    //=> Execute all steps in order, sequentially
     for (const step of sortedSteps) {
         if (!step.shouldProcess(job)) return;
 
         const stepInfo = step.describe();
 
+        //=> Set the current step name in the Conversion document
         const updateState = updateConversion(job, { 'conversion.progress.step': stepInfo.code });
 
+        //=> Signal step change
         const signalProgress = job.progress({
             type: 'orchestrator',
             message: `Starting "${stepInfo.name}"`,
@@ -26,9 +33,11 @@ conversionsQueue.process(async (job: IConversionJob) => {
 
         await Promise.all([updateState, signalProgress]);
 
+        //=> Execute the step
         await step.process(job);
     }
 
+    //=> Mark conversion as terminated on the Conversion document
     await updateConversion(job, {
         'conversion.progress.completed': true,
         'conversion.progress.step': null
