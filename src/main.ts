@@ -8,12 +8,12 @@ import * as toureiro from 'toureiro';
 import logger, { morganStreamWriter } from './logger';
 import { connectDatabase } from './mongoose';
 import api from './api';
-import conversionsQueue from './converter/conversions_queue';
+import converterQueue from './converter/queue';
 
 import './bootstrap';
 
 //=> Resume the conversions queue
-conversionsQueue.resume().catch((error) => {
+converterQueue.resume().catch((error) => {
     logger.error(error.message);
     process.exit(1);
 });
