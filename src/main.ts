@@ -5,12 +5,11 @@ import * as basicAuth from 'express-basic-auth';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as toureiro from 'toureiro';
+import './bootstrap';
 import logger, { morganStreamWriter } from './logger';
 import { connectDatabase } from './mongoose';
 import api from './api';
 import converterQueue from './converter/queue';
-
-import './bootstrap';
 
 //=> Resume the conversions queue
 converterQueue.resume().catch((error) => {
@@ -52,7 +51,15 @@ const toureiroAuth = basicAuth({
     users: { [process.env.TOUREIRO_USER]: process.env.TOUREIRO_PASSWORD }
 });
 
-app.use('/toureiro', toureiroAuth, toureiro());
+const redisConf = toureiro({
+    redis: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        db: 1
+    }
+});
+
+app.use('/toureiro', toureiroAuth, redisConf);
 
 //=> Mount the API
 app.use('/api', api);
