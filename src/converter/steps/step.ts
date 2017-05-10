@@ -1,5 +1,9 @@
 import { IConversionJob } from '../job';
 
+export interface IStepsContext {
+    [customKey: string]: any;
+}
+
 export interface IStepDescription {
     code: string;
     name: string;
@@ -9,5 +13,5 @@ export interface IStepDescription {
 export interface IStepModule {
     describe(): IStepDescription;
     shouldProcess(job: IConversionJob): boolean;
-    process(job: IConversionJob): Promise<void>;
+    process(job: IConversionJob, context: IStepsContext): Promise<void>;
 }

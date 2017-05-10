@@ -1,9 +1,12 @@
 import { IConversionJob, updateConversion } from './job';
-import { IStepModule } from './steps/step';
+import { IStepModule, IStepsContext } from './steps/step';
 
 export async function processor(steps: IStepModule[], job: IConversionJob): Promise<void> {
     //=> Set the jobId on the Conversion document
     await updateConversion(job, { 'conversion.jobId': job.jobId });
+
+    //=> Initialize context
+    const context: IStepsContext = {};
 
     //=> Execute all steps in order, sequentially
     for (const step of steps) {
@@ -24,7 +27,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         await Promise.all([updateState, signalProgress]);
 
         //=> Execute the step
-        await step.process(job);
+        await step.process(job, context);
     }
 
     //=> Mark conversion as terminated on the Conversion document

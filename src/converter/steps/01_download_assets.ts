@@ -5,7 +5,11 @@ import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
 import { IConversionJob } from '../job';
-import { IStepDescription } from './step';
+import { IStepDescription, IStepsContext } from './step';
+
+export interface IDownloadAssetsStepsContext extends IStepsContext {
+    downloadedAssetsPaths: string[];
+}
 
 export function describe(): IStepDescription {
     return {
@@ -19,20 +23,17 @@ export function shouldProcess(job: IConversionJob): boolean {
     return true;
 }
 
-export async function process(job: IConversionJob): Promise<void> {
+export async function process(job: IConversionJob, context: IDownloadAssetsStepsContext): Promise<void> {
     // @TODO add progress report
-
-    job.context = { tempAssets: [] };
-
     //=> Create a temporary folder for the assets
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-dl-assets-${Date.now()}`);
     await pify(fs.mkdir)(tmpDir);
 
     //=> Start downloading all assets
-    const promises = job.data.assetUrls.map(url => downloadAndStoreAsset(url, tmpDir));
+    const downloads = job.data.assetUrls.map(url => downloadAndStoreAsset(url, tmpDir));
 
     //=> Await downloads and store resulting paths in the context
-    job.context.tempAssets = await Promise.all(promises);
+    context.downloadedAssetsPaths = await Promise.all(downloads);
 }
 
 async function downloadAndStoreAsset(assetUrl: string, directory: string): Promise<string> {
