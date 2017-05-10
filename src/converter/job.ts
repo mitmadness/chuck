@@ -7,8 +7,13 @@ export interface IConversionEvent {
     message: string;
 }
 
+export interface IContext {
+    tempAssets: string[];
+}
+
 export interface IConversionJob extends Job {
     data: IConversion;
+    context: IContext;
     progress(event: IConversionEvent): Promise<void>;
 }
 
