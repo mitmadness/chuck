@@ -51,7 +51,7 @@ const toureiroAuth = basicAuth({
     users: { [process.env.TOUREIRO_USER]: process.env.TOUREIRO_PASSWORD }
 });
 
-const redisConf = toureiro({
+const toureiroConf = toureiro({
     redis: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
@@ -59,7 +59,7 @@ const redisConf = toureiro({
     }
 });
 
-app.use('/toureiro', toureiroAuth, redisConf);
+app.use('/toureiro', toureiroAuth, toureiroConf);
 
 //=> Mount the API
 app.use('/api', api);
