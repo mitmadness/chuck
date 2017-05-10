@@ -3,6 +3,20 @@ import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
 import { ApiKey } from '../../models';
 
+const command: CommandModule = {
+    command: 'api:generate-key',
+    describe: 'Generate an API key',
+    builder: {
+        save: {
+            alias: 'S',
+            type: 'boolean',
+            desc: 'Save the API key to the database for direct use',
+            default: false
+        }
+    },
+    handler
+};
+
 interface IArgs {
     save: boolean;
 }
@@ -21,16 +35,4 @@ async function handler(args: IArgs): Promise<void> {
     }
 }
 
-export default {
-    command: 'api:generate-key',
-    describe: 'Generate an API key',
-    builder: {
-        save: {
-            alias: 'S',
-            type: 'boolean',
-            desc: 'Save the API key to the database for direct use',
-            default: false
-        }
-    },
-    handler
-} as CommandModule;
+export default command;

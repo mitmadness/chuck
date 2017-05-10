@@ -3,6 +3,12 @@ import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
 import { ApiKey } from '../../models';
 
+const command: CommandModule = {
+    command: 'api:revoke-key <key>',
+    describe: 'Revoke an API key',
+    handler
+};
+
 interface IArgs {
     key: string;
 }
@@ -17,8 +23,4 @@ async function handler(args: IArgs): Promise<void> {
     await disconnectFromDatabase();
 }
 
-export default {
-    command: 'api:revoke-key <key>',
-    describe: 'Revoke an API key',
-    handler
-} as CommandModule;
+export default command;
