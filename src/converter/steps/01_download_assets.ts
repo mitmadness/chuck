@@ -8,6 +8,7 @@ import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
 
 export interface IDownloadAssetsStepsContext extends IStepsContext {
+    downloadedAssetsDir: string;
     downloadedAssetsPaths: string[];
 }
 
@@ -33,7 +34,15 @@ export async function process(job: IConversionJob, context: IDownloadAssetsSteps
     const downloads = job.data.assetUrls.map(url => downloadAndStoreAsset(url, tmpDir));
 
     //=> Await downloads and store resulting paths in the context
+    context.downloadedAssetsDir = tmpDir;
     context.downloadedAssetsPaths = await Promise.all(downloads);
+}
+
+export async function cleanup(context: Readonly<IDownloadAssetsStepsContext>): Promise<void> {
+    const rms = context.downloadedAssetsPaths.map(path => pify(fs.unlink)(path));
+
+    await Promise.all(rms);
+    await pify(fs.rmdir)(context.downloadedAssetsDir);
 }
 
 async function downloadAndStoreAsset(assetUrl: string, directory: string): Promise<string> {
