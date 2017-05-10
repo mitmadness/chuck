@@ -14,4 +14,5 @@ export interface IStepModule {
     describe(): IStepDescription;
     shouldProcess(job: IConversionJob): boolean;
     process(job: IConversionJob, context: IStepsContext): Promise<void>;
+    cleanup?(context: Readonly<IStepsContext>): Promise<void>;
 }
