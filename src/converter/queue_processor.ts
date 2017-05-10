@@ -10,7 +10,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
 
     //=> Execute all steps in order, sequentially
     for (const step of steps) {
-        if (!step.shouldProcess(job)) return;
+        if (!step.shouldProcess(job)) continue;
 
         const stepInfo = step.describe();
 
