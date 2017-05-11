@@ -2,6 +2,7 @@
   "name": "@mitm/chuck",
   "version": "0.0.0-development",
   "description": "chuck is a webservice that converts various 3D file-formats to Unity3D AssetBundles",
+  "types": "dist/entry/libchuck.d.ts",
   "main": "dist/entry/libchuck.js",
   "repository": "git@github.com:mitmadness/chuck.git",
   "author": "Morgan Touverey Quilling <mtouverey@methodinthemadness.eu>",

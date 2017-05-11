@@ -6,7 +6,7 @@
     "target": "es2015",
     "module": "commonjs",
     "moduleResolution": "node",
-    "declaration": false,
+    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

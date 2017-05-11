@@ -5,7 +5,7 @@ import { wrapAsync, safeOutData } from '../express_utils';
 import { NotFoundError } from './http_errors';
 import { hasValidApiKey } from './middlewares';
 
-const router = express.Router();
+const router: express.Router = express.Router();
 
 router.post('/', hasValidApiKey(), wrapAsync(async (req, res, next) => {
     const conversionData = safeConversionData(req.body);
