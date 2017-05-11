@@ -19,7 +19,8 @@ From the [documentation](https://docs.unity3d.com/Manual/AssetBundlesIntro.html)
 
  - [Node.js](https://nodejs.org/en/) v.7 or higher ;
  - [yarn](https://yarnpkg.com/en/) dependency manager ;
- - A running [MongoDB](https://www.mongodb.com/) server.
+ - A running [MongoDB](https://www.mongodb.com/) server ;
+ - A running [Redis](https://redis.io/) server.
 
 Run `yarn install` to install dependencies.
 
@@ -27,22 +28,24 @@ Run `yarn install` to install dependencies.
 
 The workflow is based on npm scripts:
 
-  - `yarn start`: starts the production, compiled version of the server ;
-  - `yarn nodemon-server`: starts the server and restarts it when the compiled files change (production or development, but for production you could use [pm2](http://pm2.keymetrics.io/)) ;
-  - `yarn watch`: watch source files and compiles them on change ;
-  - `yarn build`: compiles the server.
+  - `yarn start`: starts the TypeScript compiler in watch mode ;
+  - `yarn build`: compile TypeScript sources ;
+  - `yarn serve`: starts the server and restarts it when the compiled files change (production or development, but for production you could use [pm2](http://pm2.keymetrics.io/) with `yarn standalone`) ;
+  - `yarn cli`: shortcut to chuck's CLI (usage: `yarn cli -- command --arg1 --arg2`) ;
+  - `yarn standalone`: starts the Express server without nodemon ;
+  - `yarn lint`: checks code style on the TypeScript sources (recommended: install typescript and tslint extensions for your editor).
   
 So, basically, to start a development session, run in a terminal:
 
 ```
 yarn install
-yarn watch
+yarn start
 ```
 
 In a terminal aside of the first one, run:
 
 ```
-yarn nodemon-server
+yarn serve
 ```
 
 You can also create an `.env` file at the project root to override the default environment variables in `.env.defaults`. 
