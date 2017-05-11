@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "cli": "node dist/cli.bundle.js",
-    "start": "node dist/main.bundle.js",
-    "nodemon-server": "nodemon dist/main.bundle.js",
+    "start": "node dist/standalone.bundle.js",
+    "nodemon-server": "nodemon dist/standalone.bundle.js",
     "watch": "webpack --display-error-details --progress --watch",
     "build": "webpack --display-error-details --progress"
   },

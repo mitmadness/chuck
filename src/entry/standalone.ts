@@ -6,10 +6,10 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as toureiro from 'toureiro';
 import './bootstrap';
-import logger, { morganStreamWriter } from './logger';
-import { connectDatabase } from './mongoose';
-import api from './api';
-import converterQueue from './converter/queue';
+import logger, { morganStreamWriter } from '../logger';
+import { connectDatabase } from '../mongoose';
+import api from '../api';
+import converterQueue from '../converter/queue';
 
 //=> Resume the conversions queue
 converterQueue.resume().catch((error) => {

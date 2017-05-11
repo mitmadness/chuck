@@ -9,15 +9,16 @@ const ENV_AGNOSTIC_CONFIG = {
     externals: [webpackNodeExternals()],
 
     entry: {
-        main: fromRoot('src/main.ts'),
-        cli: fromRoot('src/cli/index.ts')
+        libchuck: fromRoot('src/entry/libchuck.ts'),
+        cli: fromRoot('src/entry/cli.ts'),
+        standalone: fromRoot('src/entry/standalone.ts')
     },
 
     output: {
         path: fromRoot('dist'),
         filename: '[name].bundle.js',
         sourceMapFilename: '[name].bundle.map',
-        chunkFilename: '[id].chunk.js'
+        libraryTarget: 'commonjs2'
     },
 
     plugins: [

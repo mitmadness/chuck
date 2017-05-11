@@ -1,5 +1,5 @@
 import dotenvx from 'dotenv-extended';
-import logger from './logger';
+import logger from '../logger';
 
 //=> Load environment variables from .env and .env.defaults
 dotenvx.load();
