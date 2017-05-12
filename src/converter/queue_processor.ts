@@ -13,7 +13,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
     //=> Execute all steps in order, sequentially
     for (const step of steps) {
         //=> Pass or record passage
-        if (!step.shouldProcess(job)) continue;
+        if (!step.shouldProcess(job, context)) continue;
         stepsStack.push(step);
 
         //=> Signal progress

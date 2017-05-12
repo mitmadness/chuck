@@ -1,5 +1,11 @@
 import { IConversionJob } from '../job';
-import { IStepDescription } from './step';
+import { IStepDescription, IStepsContext } from './step';
+
+export interface IExecIfcStepsContext extends IStepsContext {
+    downloadedAssetsPaths: string[];
+    convertedAssetsDir: string;
+    convertedAssetsPaths: string[];
+}
 
 export function describe(): IStepDescription {
     return {
@@ -9,7 +15,13 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob) {
+export function shouldProcess(job: IConversionJob, context: IExecIfcStepsContext) {
+    if (context.downloadedAssetsPaths == undefined) {
+        return false;
+    }
+    if (!context.downloadedAssetsPaths.length) {
+        return false;
+    }
     return true;
 }
 

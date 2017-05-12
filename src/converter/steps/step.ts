@@ -12,7 +12,7 @@ export interface IStepDescription {
 
 export interface IStepModule {
     describe(): IStepDescription;
-    shouldProcess(job: IConversionJob): boolean;
+    shouldProcess(job: IConversionJob, context: IStepsContext): boolean;
     process(job: IConversionJob, context: IStepsContext): Promise<void>;
     cleanup?(context: Readonly<IStepsContext>): Promise<void>;
 }
