@@ -6,9 +6,9 @@
   "author": "Morgan Touverey Quilling <mtouverey@methodinthemadness.eu>",
   "license": "MIT",
   "scripts": {
-    "start": "tsc -w",
+    "start": "nodemon dist/entry/standalone.js",
+    "watch": "tsc -w",
     "build": "yarn lint && tsc",
-    "serve": "nodemon dist/entry/standalone.js",
     "cli": "node dist/entry/cli.js",
     "standalone": "node dist/entry/standalone.js",
     "lint": "tslint src/**/*.ts stubs/**/*.ts"
