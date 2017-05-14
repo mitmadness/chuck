@@ -5,7 +5,7 @@ declare module 'toureiro' {
 
     namespace toureiro {
         interface IRedisOptions {
-            redis : { host: string, port: number, db: number };
+            redis: { host: string, port: number, db: number };
         }
     }
 

@@ -7,7 +7,7 @@ const logger = new winston.Logger({
             level: 'debug',
             json: false,
             colorize: true,
-            timestamp: process.env.WEBPACK_ENV == 'production'
+            timestamp: process.env.NODE_ENV == 'production'
         })
     ]
 });

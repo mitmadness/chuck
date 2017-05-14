@@ -6,10 +6,10 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as toureiro from 'toureiro';
 import './bootstrap';
-import logger, { morganStreamWriter } from './logger';
-import { connectDatabase } from './mongoose';
-import api from './api';
-import converterQueue from './converter/queue';
+import logger, { morganStreamWriter } from '../logger';
+import { connectDatabase } from '../mongoose';
+import api from '../api';
+import converterQueue from '../converter/queue';
 
 //=> Resume the conversions queue
 converterQueue.resume().catch((error) => {
@@ -28,12 +28,12 @@ connectDatabase(process.env.MONGO_URL).catch((error) => {
 });
 
 //=> Enable CORS in dev mode so the front can reach the API
-if (process.env.WEBPACK_ENV == 'development') {
+if (process.env.NODE_ENV == 'development') {
     app.use(cors());
 }
 
 //=> Logging of HTTP requests with morgan
-const morganFormat = process.env.WEBPACK_ENV == 'production'
+const morganFormat = process.env.NODE_ENV == 'production'
     ? ':remote-addr - :method :url [:status], resp. :response-time ms, :res[content-length] bytes, referrer ":referrer"'
     : 'dev';
 
@@ -67,5 +67,5 @@ app.use('/api', api);
 //=> Start the HTTP server
 app.listen(port, () => {
     logger.info(`🌍 Up and running @ http://${os.hostname()}:${port}`);
-    logger.info(`Built for: ${process.env.WEBPACK_ENV}`);
+    logger.info(`Running for env: ${process.env.NODE_ENV}`);
 });

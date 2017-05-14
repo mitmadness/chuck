@@ -1,0 +1,10 @@
+src/*
+stubs/*
+.editorconfig
+.env*
+.gitignore
+.npmignore
+.travis.yml
+chuck.png
+tsconfig.json
+tslint.json

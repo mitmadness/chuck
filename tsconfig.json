@@ -2,11 +2,11 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "outDir": "./compiled",
-    "target": "es5",
-    "module": "es2015",
+    "outDir": "dist",
+    "target": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "declaration": false,
+    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -17,5 +17,6 @@
     "strictNullChecks": true,
     "lib": ["es7"]
   },
+  "include": ["src/**/*", "stubs/*.d.ts"],
   "exclude": ["node_modules"]
 }

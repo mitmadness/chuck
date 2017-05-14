@@ -1,5 +1,7 @@
+import { DocumentQuery } from 'mongoose';
 import { Job } from 'bull';
 import { Conversion, IConversion } from '../models';
+import { IConversionModel } from '../models/conversion';
 
 export interface IConversionEvent {
     [customKey: string]: any;
@@ -12,6 +14,6 @@ export interface IConversionJob extends Job {
     progress(event: IConversionEvent): Promise<void>;
 }
 
-export function updateConversion(job: IConversionJob, fields: object) {
+export function updateConversion(job: IConversionJob, fields: object): DocumentQuery<any, IConversionModel> {
     return Conversion.findOneAndUpdate({ code: job.data.code }, { $set: fields });
 }
