@@ -1,0 +1,61 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Chuck",
+		"_postman_id": "ae2ec073-82b3-a253-8ce8-84bbe667348c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Push conversion request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if (responseCode.code === 202) {",
+							"    var conversion = JSON.parse(responseBody);",
+							"    postman.setGlobalVariable(\"lastConversionId\", conversion.code);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{baseUrl}}/api/conversions",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{apiKey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"assetBundleName\": \"myassetbundle.ab\",\n  \"assetUrls\": [\"http://site/house.ifc\"],\n  \"azure\": {\n    \"account\": \"mitm\",\n    \"key\": \"apikey\",\n    \"container\": \"assetbundles\"\n  }\n}"
+				},
+				"description": "Crée une nouvelle demande de conversion, placée dans la queue de conversion."
+			},
+			"response": []
+		},
+		{
+			"name": "Get conversion info",
+			"request": {
+				"url": "{{baseUrl}}/api/conversions/{{lastConversionId}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Récupère les informations sur une conversion, avec le statut du job dans la queue."
+			},
+			"response": []
+		}
+	]
+}
