@@ -7,13 +7,12 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
 
     //=> Initialize context
     const stepsStack: IStepModule[] = [];
-    const context: IStepsContext = {};
+    const context: IStepsContext = { assetsPaths : []};
     const cleanup = stepsCleanupProcessor.bind(null, stepsStack, job, context);
-
     //=> Execute all steps in order, sequentially
     for (const step of steps) {
         //=> Pass or record passage
-        if (!step.shouldProcess(job)) continue;
+        if (!step.shouldProcess(job, context)) continue;
         stepsStack.push(step);
 
         //=> Signal progress

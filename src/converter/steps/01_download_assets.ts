@@ -85,6 +85,8 @@ async function downloadAndStoreAsset(
     return new Promise<string>((resolve) => {
         onlineAsset.pipe(localAsset).on('finish', () => {
             localAsset.close();
+
+            context.assetsPaths.push(filePath);
             context.downloadedAssetsPaths.push(filePath);
 
             resolve(filePath);
