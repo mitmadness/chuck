@@ -52,7 +52,7 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
             dl.then(() => {
                 if (--remainingConversions == 0) {
                     if (errors.length) {
-                        reject(new Error('Error(s) while downloadings'));
+                        reject(new ExtendedError('Error(s) while converting', errors));
                     } else {
                         resolve();
                     }
@@ -65,6 +65,14 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
     });
 }
 
+class ExtendedError extends Error {
+    constructor(message: string, public errors: any[]) {
+        super(message);
+
+        Object.setPrototypeOf(this, ExtendedError.prototype);
+    }
+}
+
 export async function convertAndStoreAssets(context: IExecIfcStepsContext, assetPath: string): Promise<string> {
     const fileName = path.parse(assetPath).name + ".dae";
     const filePath = path.resolve(`${context.convertedAssetsDir}/${fileName}`);
@@ -73,7 +81,7 @@ export async function convertAndStoreAssets(context: IExecIfcStepsContext, asset
         [assetPath, filePath, '-y', '--unicode', 'escape', '--use-element-hierarchy', '--use-element-types'],
         (error, stdout, stderr) => {
             if (error) {
-                reject(stderr);
+                reject(stdout);
                 return;
             }
             resolve(filePath);
