@@ -7,7 +7,6 @@ import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
 
 export interface IExecIfcStepsContext extends IStepsContext {
-    downloadedAssetsPaths: string[];
     convertedAssetsDir: string;
     convertedAssetsPaths: string[];
 }
@@ -21,10 +20,13 @@ export function describe(): IStepDescription {
 }
 
 export function shouldProcess(job: IConversionJob, context: IExecIfcStepsContext) {
-    if (context.downloadedAssetsPaths == undefined) {
+    if (context.assetsPaths == undefined) {
         return false;
     }
-    if (!context.downloadedAssetsPaths.length) {
+    if (!context.assetsPaths.length) {
+        return false;
+    }
+    if (!context.assetsPaths.some(assetPath => assetPath.toLowerCase().endsWith(".ifc"))) {
         return false;
     }
     return true;
@@ -38,12 +40,14 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
     context.convertedAssetsDir = tmpDir;
     context.convertedAssetsPaths = [];
 
-    const conversions = context.downloadedAssetsPaths.map(async (path) => {
-        await job.progress({ type: 'exec-ifcopenshell', message : `Converting "${path}" from IFC to Collada` });
-        await convertAndStoreAssets(context, path);
+    const conversions = context.assetsPaths.map(async (assetPath, index) => {
+        if (assetPath.toLowerCase().endsWith(".ifc")) {
+            await job.progress({ type: 'exec-ifcopenshell', message: `Converting "${assetPath}" from IFC to Collada` });
+            await convertAndStoreAssets(context, assetPath, index);
+        }
     });
 
-     //=> Await downloads and check if there are errors.
+     //=> Await conversions and check if there are errors.
     let remainingConversions = conversions.length;
     const errors: any[] = [];
 
@@ -65,6 +69,13 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
     });
 }
 
+export async function cleanup(context: Readonly<IExecIfcStepsContext>): Promise<void> {
+    const rms = context.convertedAssetsPaths.map(assetPath => pify(fs.unlink)(assetPath));
+
+    await Promise.all(rms);
+    await pify(fs.rmdir)(context.convertedAssetsDir);
+}
+
 class ExtendedError extends Error {
     constructor(message: string, public errors: any[]) {
         super(message);
@@ -73,7 +84,11 @@ class ExtendedError extends Error {
     }
 }
 
-export async function convertAndStoreAssets(context: IExecIfcStepsContext, assetPath: string): Promise<string> {
+async function convertAndStoreAssets(
+    context: IExecIfcStepsContext,
+    assetPath: string,
+    index: number
+): Promise<string> {
     const fileName = path.parse(assetPath).name + ".dae";
     const filePath = path.resolve(`${context.convertedAssetsDir}/${fileName}`);
     return new Promise<string>((resolve, reject) => {
@@ -81,9 +96,12 @@ export async function convertAndStoreAssets(context: IExecIfcStepsContext, asset
         [assetPath, filePath, '-y', '--unicode', 'escape', '--use-element-hierarchy', '--use-element-types'],
         (error, stdout, stderr) => {
             if (error) {
+                context.convertedAssetsPaths.push(filePath + '.tmp');
                 reject(stdout);
                 return;
             }
+            context.convertedAssetsPaths.push(filePath);
+            context.assetsPaths[index] = filePath;
             resolve(filePath);
         });
     });
