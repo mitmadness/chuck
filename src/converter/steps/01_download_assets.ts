@@ -1,10 +1,8 @@
-import * as http from 'http';
-import * as https from 'https';
+import fetch from 'node-fetch';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
-import * as url from 'url';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
 
@@ -34,10 +32,10 @@ export async function process(job: IConversionJob, context: IDownloadAssetsSteps
     context.downloadedAssetsPaths = [];
 
     //=> Start downloading all assets
-    const downloads = job.data.assetUrls.map(async (url) => {
-        await job.progress({ type: 'download-assets', message : `Downloading "${url}"` });
-        await downloadAndStoreAsset(context, url, tmpDir);
-    });
+    const downloads = job.data.assetUrls.map(url => Promise.all([
+        job.progress({ type: 'download-assets', message : `Downloading "${url}"` }),
+        downloadAndStoreAsset(context, url, tmpDir)
+    ]));
 
     //=> Await downloads and check if there are errors.
     let remainingDownloads = downloads.length;
@@ -45,17 +43,12 @@ export async function process(job: IConversionJob, context: IDownloadAssetsSteps
 
     return new Promise<void>((resolve, reject) => {
         downloads.forEach((dl) => {
-            dl.then(() => {
-                if (--remainingDownloads == 0) {
-                    if (errors.length) {
-                        reject(new ExtendedError('Error(s) while downloadings', errors));
-                    } else {
-                        resolve();
-                    }
-                }
-            }).catch(err => {
-                --remainingDownloads;
-                errors.push(err);
+            dl.catch(err => errors.push(err)).then(() => {
+                if (--remainingDownloads > 0) return;
+
+                errors.length
+                    ? reject(new MasterDownloadError('Error(s) while downloading assets', errors))
+                    : resolve();
             });
         });
     });
@@ -81,40 +74,32 @@ async function downloadAndStoreAsset(
     const onlineAsset = await downloadAsset(assetUrl);
     const localAsset = fs.createWriteStream(filePath);
 
+    context.downloadedAssetsPaths.push(filePath);
+
     //=> Pipe the HTTP response content to the write stream, then resolve
     return new Promise<string>((resolve) => {
         onlineAsset.pipe(localAsset).on('finish', () => {
             localAsset.close();
 
             context.assetsPaths.push(filePath);
-            context.downloadedAssetsPaths.push(filePath);
-
             resolve(filePath);
         });
     });
 }
 
-function downloadAsset(assetUrl: string): Promise<http.IncomingMessage> {
-    return new Promise((resolve, reject) => {
-        chooseGetProtocol(assetUrl)(assetUrl, (response) => {
-            if (response.statusCode != 200) {
-                reject(new Error(`HTTP error ${response.statusCode} for ${assetUrl}`));
-                return;
-            }
+async function downloadAsset(assetUrl: string): Promise<NodeJS.ReadableStream> {
+    const response = await fetch(assetUrl);
+    if (!response.ok) {
+        throw new Error(`Server responded with HTTP error code ${response.status} while downloading ${assetUrl}`);
+    }
 
-            resolve(response);
-        });
-    });
+    return response.body;
 }
 
-class ExtendedError extends Error {
+class MasterDownloadError extends Error {
     constructor(message: string, public errors: any[]) {
         super(message);
 
-        Object.setPrototypeOf(this, ExtendedError.prototype);
+        Object.setPrototypeOf(this, MasterDownloadError.prototype);
     }
-}
-
-function chooseGetProtocol(inputUrl: string) {
-    return url.parse(inputUrl).protocol == "https:" ? https.get : http.get;
 }
