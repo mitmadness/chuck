@@ -1,5 +1,6 @@
 import * as queue from 'bull';
 import { Job } from 'bull';
+import config from '../config';
 import logger from '../logger';
 import { IConversionJob } from './job';
 import steps from './steps';
@@ -12,7 +13,7 @@ import { processor } from './queue_processor';
 const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().priority);
 
 //=> Initialize the Bull queue
-const conversionsQueue = queue('chuck-conversion-queue', process.env.REDIS_PORT, process.env.REDIS_HOST);
+const conversionsQueue = queue('chuck-conversion-queue', config.redis.port, config.redis.host);
 
 //=> Initialize the job processor for the conversions queue
 conversionsQueue.process(processor.bind(null, sortedSteps));
