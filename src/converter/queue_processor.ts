@@ -15,9 +15,9 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         if (!step.shouldProcess(job, context)) continue;
         stepsStack.push(step);
 
-        //=> Signal progress
         const stepInfo = step.describe();
 
+        //=> Signal progress
         await Promise.all([
             updateConversion(job, { 'conversion.progress.step': stepInfo.code }),
             job.progress({ type: 'orchestrator', message: `Starting "${stepInfo.name}"`, step: stepInfo })
@@ -59,8 +59,7 @@ export async function stepsCleanupProcessor(
     //=> Call each step's cleanup() function
     while (stepsStack.length) {
         const step = stepsStack.pop() as IStepModule;
-        // implementing cleanup() isn't mandatory
-        if (step.cleanup) {
+        if (step.cleanup) { // implementing cleanup() isn't mandatory
             await step.cleanup(context);
         }
     }
