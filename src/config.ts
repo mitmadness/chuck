@@ -2,13 +2,14 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
-//=> This is the global configuration interface
+export type Env = 'development'|'production';
+
 export interface IChuckConfig {
-    env: string;
+    env: Env;
     serverPort: number;
     mongoUrl: string;
     redis: { host: string; port: number; };
-    toureiro: { user: string; password: string; };
+    toureiro: { enable: boolean, user: string; password: string; };
 }
 
 //=> Read the project's .env file at root
@@ -33,6 +34,7 @@ const config: IChuckConfig = {
         port: parseInt(env.REDIS_PORT, 10) || 6379
     },
     toureiro: {
+        enable: false,
         user: env.TOUREIRO_USER || 'admin',
         password: env.TOUREIRO_PASSWORD || 'admin'
     }

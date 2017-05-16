@@ -47,16 +47,18 @@ app.use(
 );
 
 //=> Mount Toureiro
-const toureiroAuth = basicAuth({
-    challenge: true,
-    users: { [config.toureiro.user]: config.toureiro.password }
-});
+if (config.toureiro.enable) {
+    const toureiroAuth = basicAuth({
+        challenge: true,
+        users: { [config.toureiro.user]: config.toureiro.password }
+    });
 
-const toureiroConf = toureiro({
-    redis: { host: config.redis.host, port: config.redis.port, db: 1 }
-});
+    const toureiroConf = toureiro({
+        redis: { host: config.redis.host, port: config.redis.port, db: 1 }
+    });
 
-app.use('/toureiro', toureiroAuth, toureiroConf);
+    app.use('/toureiro', toureiroAuth, toureiroConf);
+}
 
 //=> Mount the API
 app.use('/api', api);
