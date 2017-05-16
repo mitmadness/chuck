@@ -1,4 +1,5 @@
 import { CommandModule } from 'yargs';
+import config from '../../config';
 import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
 import { ApiKey } from '../../models';
@@ -14,7 +15,7 @@ interface IArgs {
 }
 
 async function handler(args: IArgs): Promise<void> {
-    await connectDatabase(process.env.MONGO_URL);
+    await connectDatabase(config.mongoUrl);
 
     await ApiKey.remove({ key: args.key });
 

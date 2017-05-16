@@ -1,5 +1,6 @@
 import * as winston from 'winston';
 import { StreamOptions } from 'morgan';
+import config from './config';
 
 const logger = new winston.Logger({
     transports: [
@@ -7,7 +8,7 @@ const logger = new winston.Logger({
             level: 'debug',
             json: false,
             colorize: true,
-            timestamp: process.env.NODE_ENV == 'production'
+            timestamp: config.env == 'production'
         })
     ]
 });

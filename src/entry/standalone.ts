@@ -6,6 +6,7 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as toureiro from 'toureiro';
 import './bootstrap';
+import config from '../config';
 import logger, { morganStreamWriter } from '../logger';
 import { connectDatabase } from '../mongoose';
 import api from '../api';
@@ -19,21 +20,21 @@ converterQueue.resume().catch((error) => {
 
 //=> Create an Express app
 const app = express();
-const port = process.env.SERVER_PORT;
+const port = config.serverPort;
 
 //=> Connect to the MongoDB database
-connectDatabase(process.env.MONGO_URL).catch((error) => {
+connectDatabase(config.mongoUrl).catch((error) => {
     logger.error(error.message);
     process.exit(1);
 });
 
 //=> Enable CORS in dev mode so the front can reach the API
-if (process.env.NODE_ENV == 'development') {
+if (config.env == 'development') {
     app.use(cors());
 }
 
 //=> Logging of HTTP requests with morgan
-const morganFormat = process.env.NODE_ENV == 'production'
+const morganFormat = config.env == 'production'
     ? ':remote-addr - :method :url [:status], resp. :response-time ms, :res[content-length] bytes, referrer ":referrer"'
     : 'dev';
 
@@ -48,15 +49,11 @@ app.use(
 //=> Mount Toureiro
 const toureiroAuth = basicAuth({
     challenge: true,
-    users: { [process.env.TOUREIRO_USER]: process.env.TOUREIRO_PASSWORD }
+    users: { [config.toureiro.user]: config.toureiro.password }
 });
 
 const toureiroConf = toureiro({
-    redis: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-        db: 1
-    }
+    redis: { host: config.redis.host, port: config.redis.port, db: 1 }
 });
 
 app.use('/toureiro', toureiroAuth, toureiroConf);
@@ -67,5 +64,5 @@ app.use('/api', api);
 //=> Start the HTTP server
 app.listen(port, () => {
     logger.info(`🌍 Up and running @ http://${os.hostname()}:${port}`);
-    logger.info(`Running for env: ${process.env.NODE_ENV}`);
+    logger.info(`Running for env: ${config.env}`);
 });

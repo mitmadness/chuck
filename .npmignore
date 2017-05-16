@@ -1,7 +1,7 @@
 src/*
 stubs/*
 .editorconfig
-.env*
+.env
 .gitignore
 .npmignore
 .travis.yml

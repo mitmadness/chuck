@@ -1,8 +1,8 @@
-import dotenvx from 'dotenv-extended';
+import * as sourceMapSupport from 'source-map-support';
+import '../config';
 import logger from '../logger';
 
-//=> Load environment variables from .env and .env.defaults
-dotenvx.load();
+sourceMapSupport.install();
 
 process.on('unhandledRejection', (reason: any, promise: Promise<any>): void => {
     logger.error('UNHANDLED REJECTION', reason, promise);
