@@ -2,11 +2,14 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
-import { BuildTargets, bundle} from '@mitm/assetbundlecompiler';
+import { BuildTargets, bundle, setUnityPath} from '@mitm/assetbundlecompiler';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
+import config from '../../config';
 
 const { WebGL } = BuildTargets;
+
+setUnityPath(config.unityPath);
 
 export interface IAssetBundleStepContext extends IStepsContext {
     assetBundleDir: string;
@@ -21,7 +24,7 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context : IAssetBundleStepContext) {
+export function shouldProcess(job: IConversionJob, context: IAssetBundleStepContext) {
     if (context.assetsPaths == undefined) {
         return false;
     }
@@ -33,10 +36,10 @@ export function shouldProcess(job: IConversionJob, context : IAssetBundleStepCon
 
 export async function process(job: IConversionJob, context: IAssetBundleStepContext ): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
-    const assetBundlePath = path.resolve(tmpDir, job.data.assetBundleName)
+    const assetBundlePath = path.resolve(tmpDir, job.data.assetBundleName);
 
     await pify(fs.mkdir)(tmpDir);
-    
+
     context.assetBundleDir = tmpDir;
     context.assetBundlePath = assetBundlePath;
 
