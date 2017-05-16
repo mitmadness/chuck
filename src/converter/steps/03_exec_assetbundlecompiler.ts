@@ -8,8 +8,9 @@ import { IStepDescription, IStepsContext } from './step';
 
 const { WebGL } = BuildTargets;
 
-export interface IAssetBundleStepsContext extends IStepsContext {
+export interface IAssetBundleStepContext extends IStepsContext {
     assetBundleDir: string;
+    assetBundlePath: string;
 }
 
 export function describe(): IStepDescription {
@@ -20,17 +21,32 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob) {
+export function shouldProcess(job: IConversionJob, context : IAssetBundleStepContext) {
+    if (context.assetsPaths == undefined) {
+        return false;
+    }
+    if (!context.assetsPaths.length) {
+        return false;
+    }
     return true;
 }
 
-export async function process(job: IConversionJob, context: IAssetBundleStepsContext ): Promise<void> {
+export async function process(job: IConversionJob, context: IAssetBundleStepContext ): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
+    const assetBundlePath = path.resolve(tmpDir, job.data.assetBundleName)
+
     await pify(fs.mkdir)(tmpDir);
+    
     context.assetBundleDir = tmpDir;
+    context.assetBundlePath = assetBundlePath;
 
     await bundle(...context.assetsPaths)
         .targeting(WebGL)
         .withLogger(async (log) => await job.progress({ type: 'exec-assetbundlecompiler', message: log }) )
-        .to(path.resolve(tmpDir, job.data.assetBundleName));
+        .to(assetBundlePath);
+}
+
+export async function cleanup(context: Readonly<IAssetBundleStepContext>): Promise<void> {
+    await pify(fs.unlink)(context.assetBundlePath);
+    await pify(fs.rmdir)(context.assetBundleDir);
 }
