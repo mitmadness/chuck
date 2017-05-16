@@ -27,13 +27,13 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         try {
             await step.process(job, context);
         } catch (err) {
-            await cleanup();
+            await cleanup(`An error occured while running step ${stepInfo.code}`);
             throw err;
         }
     }
 
     //=> Perform cleanup
-    await cleanup();
+    await cleanup('All steps have terminated successfuly');
 
     //=> Mark conversion as terminated on the Conversion document
     await updateConversion(job, {
@@ -45,14 +45,15 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
 export async function stepsCleanupProcessor(
     stepsStack: IStepModule[],
     job: IConversionJob,
-    context: IStepsContext
+    context: IStepsContext,
+    reason: string
 ): Promise<void> {
     //=> Signal cleanup
     const stepNames = stepsStack.map(step => step.describe().code).join(', ');
 
     await Promise.all([
         updateConversion(job, { 'conversion.progress.step': 'cleanup' }),
-        job.progress({ type: 'orchestrator', message: `Performing general cleanup for steps ${stepNames}` })
+        job.progress({ type: 'orchestrator', message: `Performing cleanup for steps: ${stepNames} (${reason})` })
     ]);
 
     //=> Call each step's cleanup() function
