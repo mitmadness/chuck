@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
+//=> This is the global configuration interface
 export interface IChuckConfig {
     env: string;
     serverPort: number;
@@ -10,6 +11,7 @@ export interface IChuckConfig {
     toureiro: { user: string; password: string; };
 }
 
+//=> Read the project's .env file at root
 let envSource: string;
 try {
     const envSourcePath = path.resolve(`${__dirname}/../.env`);
@@ -18,8 +20,10 @@ try {
     envSource = '';
 }
 
+//=> Parse the .env file content
 const env = dotenv.parse(envSource);
 
+//=> Hydrate config with the .env file merged with default values
 const config: IChuckConfig = {
     env: env.NODE_ENV || process.env.NODE_ENV || 'development',
     serverPort: parseInt(env.SERVER_PORT, 10) || 3001,
