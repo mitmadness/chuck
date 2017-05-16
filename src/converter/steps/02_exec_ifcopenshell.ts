@@ -20,16 +20,9 @@ export function describe(): IStepDescription {
 }
 
 export function shouldProcess(job: IConversionJob, context: IExecIfcStepsContext) {
-    if (context.assetsPaths == undefined) {
-        return false;
-    }
-    if (!context.assetsPaths.length) {
-        return false;
-    }
-    if (!context.assetsPaths.some(assetPath => assetPath.toLowerCase().endsWith(".ifc"))) {
-        return false;
-    }
-    return true;
+    return context.assetsPaths &&
+        context.assetsPaths.length &&
+        context.assetsPaths.some(assetPath => assetPath.toLowerCase().endsWith('.ifc'));
 }
 
 export async function process(job: IConversionJob, context: IExecIfcStepsContext): Promise<void> {
@@ -41,27 +34,27 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
     context.convertedAssetsPaths = [];
 
     const conversions = context.assetsPaths.map(async (assetPath, index) => {
-        if (assetPath.toLowerCase().endsWith(".ifc")) {
+        if (assetPath.toLowerCase().endsWith('.ifc')) {
             await job.progress({ type: 'exec-ifcopenshell', message: `Converting "${assetPath}" from IFC to Collada` });
             await convertAndStoreAssets(context, assetPath, index);
         }
     });
 
-     //=> Await conversions and check if there are errors.
+    //=> Await conversions and check if there are errors.
     let remainingConversions = conversions.length;
     const errors: any[] = [];
 
     return new Promise<void>((resolve, reject) => {
-        conversions.forEach((dl) => {
-            dl.then(() => {
+        conversions.forEach((conversion) => {
+            conversion.then(() => {
                 if (--remainingConversions == 0) {
                     if (errors.length) {
-                        reject(new ExtendedError('Error(s) while converting', errors));
+                        reject(new ConversionError('Error(s) while converting', errors));
                     } else {
                         resolve();
                     }
                 }
-            }).catch(err => {
+            }).catch((err) => {
                 --remainingConversions;
                 errors.push(err);
             });
@@ -76,11 +69,11 @@ export async function cleanup(context: Readonly<IExecIfcStepsContext>): Promise<
     await pify(fs.rmdir)(context.convertedAssetsDir);
 }
 
-class ExtendedError extends Error {
+class ConversionError extends Error {
     constructor(message: string, public errors: any[]) {
         super(message);
 
-        Object.setPrototypeOf(this, ExtendedError.prototype);
+        Object.setPrototypeOf(this, ConversionError.prototype);
     }
 }
 
@@ -89,20 +82,24 @@ async function convertAndStoreAssets(
     assetPath: string,
     index: number
 ): Promise<string> {
-    const fileName = path.parse(assetPath).name + ".dae";
+    const fileName = path.parse(assetPath).name + '.dae';
     const filePath = path.resolve(`${context.convertedAssetsDir}/${fileName}`);
+
     return new Promise<string>((resolve, reject) => {
-        child_process.execFile('IfcConvert',
-        [assetPath, filePath, '-y', '--unicode', 'escape', '--use-element-hierarchy', '--use-element-types'],
-        (error, stdout, stderr) => {
-            if (error) {
-                context.convertedAssetsPaths.push(filePath + '.tmp');
-                reject(stdout);
-                return;
-            }
-            context.convertedAssetsPaths.push(filePath);
-            context.assetsPaths[index] = filePath;
-            resolve(filePath);
-        });
+        child_process.execFile(
+            'IfcConvert',
+            [assetPath, filePath, '-y', '--unicode', 'escape', '--use-element-hierarchy', '--use-element-types'],
+            (error, stdout) => {
+                if (error) {
+                    context.convertedAssetsPaths.push(`${filePath}.tmp`);
+                    reject(stdout);
+                    return;
+                }
+
+                context.convertedAssetsPaths.push(filePath);
+                context.assetsPaths[index] = filePath;
+
+                resolve(filePath);
+            });
     });
 }
