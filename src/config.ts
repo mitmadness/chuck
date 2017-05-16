@@ -10,6 +10,7 @@ export interface IChuckConfig {
     mongoUrl: string;
     redis: { host: string; port: number; };
     toureiro: { enable: boolean, user: string; password: string; };
+    unityPath: string;
 }
 
 //=> Read the project's .env file at root
@@ -37,7 +38,8 @@ const config: IChuckConfig = {
         enable: false,
         user: env.TOUREIRO_USER || 'admin',
         password: env.TOUREIRO_PASSWORD || 'admin'
-    }
+    },
+    unityPath: env.UNITY_EDITOR_PATH || ''
 };
 
 export default config;
