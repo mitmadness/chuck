@@ -7,8 +7,8 @@ export interface IConversion {
     assetBundleName: string;
     assetUrls: string[];
     azure: {
-        account: string;
-        key: string;
+        host: string;
+        sharedAccessSignatureToken: string;
         container: string;
     };
     conversion: {
@@ -36,9 +36,9 @@ const ConversionSchema = new Schema({
     },
 
     azure: {
-        account: { type: String, required: true },
-        key: { type: String, required: true },
-        container: { type: String, required: true }
+        host: { type: String, required: true },
+        sharedAccessSignatureToken: { type: String, required: true },
+        container : { type: String, required: true }
     },
 
     conversion: {

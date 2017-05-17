@@ -1,8 +1,8 @@
 import * as azure from 'azure-storage';
 import * as pify from 'pify';
-import * as path from 'path';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
+import config from '../../config';
 
 export interface IUploadBundleStepContext extends IStepsContext {
     assetBundlePath: string;
@@ -21,18 +21,26 @@ export function shouldProcess(job: IConversionJob, context: IUploadBundleStepCon
 }
 
 export async function process(job: IConversionJob, context: IUploadBundleStepContext): Promise<void> {
-    const devStoreCreds = azure.generateDevelopmentStorageCredentials();
-    
-    const blobService = azure.createBlobService(devStoreCreds);
-    //const blobService = azure.createBlobService(job.data.azure.account, job.data.azure.key);
-    
-    const blobName = path.parse(context.assetBundlePath).name;
-
     await job.progress({ type: 'exec-assetbundlecompiler', message: `Upload "${context.assetBundlePath}" to Azure` });
-    
+
+    let blobService: azure.BlobService;
+
+    if (config.enableAzureEmulator) {
+        const devStoreCreds = azure.generateDevelopmentStorageCredentials();
+        blobService = azure.createBlobService(devStoreCreds);
+    } else {
+        blobService = azure.createBlobServiceWithSas(job.data.azure.host, job.data.azure.sharedAccessSignatureToken);
+    }
+
+    const blobName = job.data.assetBundleName;
+    const container = job.data.azure.container;
+
     const createContainer = blobService.createContainerIfNotExists.bind(blobService);
-    await pify(createContainer)(job.data.azure.container, {publicAccessLevel : 'blob'});
+    await pify(createContainer)(container, {publicAccessLevel : 'blob'});
 
     const createBlockBlobFromLocalFile = blobService.createBlockBlobFromLocalFile.bind(blobService);
-    await pify(createBlockBlobFromLocalFile)(job.data.azure.container, blobName, context.assetBundlePath);
+    await pify(createBlockBlobFromLocalFile)(container, blobName, context.assetBundlePath);
+
+    const blobUrl = blobService.getUrl(container, blobName);
+    context.assetsPaths = context.assetsPaths.map(path => path = blobUrl);
 }
