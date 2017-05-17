@@ -16,6 +16,7 @@ export interface IConversion {
         progress: {
             completed: boolean;
             step: string|null;
+            error: any|null;
         };
     };
 }
@@ -45,7 +46,8 @@ const ConversionSchema = new Schema({
         jobId: { type: String, default: null },
         progress: {
             completed: { type: Boolean, default: false },
-            step: { type: String, default: null }
+            step: { type: String, default: null },
+            error: { type: Schema.Types.Mixed, default: null }
         }
     }
 });

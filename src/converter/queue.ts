@@ -1,13 +1,8 @@
 import * as queue from 'bull';
-import { Job } from 'bull';
 import config from '../config';
-import logger from '../logger';
-import { IConversionJob } from './job';
 import steps from './steps';
 import { processor } from './queue_processor';
-
-// QUEUE INITIALIZATION
-//---------------------
+import * as handlers from './queue_event_handlers';
 
 //=> Sort all steps with their declared priority
 const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().priority);
@@ -18,33 +13,17 @@ const conversionsQueue = queue('chuck-conversion-queue', config.redis.port, conf
 //=> Initialize the job processor for the conversions queue
 conversionsQueue.process(processor.bind(null, sortedSteps));
 
-// GLOBAL QUEUE EVENTS
-//--------------------
+//=> Queue-related events
+conversionsQueue.on('ready', handlers.onQueueReady);
+conversionsQueue.on('paused', handlers.onQueuePaused);
+conversionsQueue.on('resumed', handlers.onQueueResumed);
+conversionsQueue.on('error', handlers.onQueueError);
+conversionsQueue.on('cleaned', handlers.onQueueCleaned);
 
-conversionsQueue.on('ready', () => logger.info('convqueue: Now ready'));
-
-conversionsQueue.on('paused', () => logger.info('convqueue: Now paused'));
-
-conversionsQueue.on('resumed', () => logger.info('convqueue: Now resumed'));
-
-conversionsQueue.on('error', (err) => logger.error('convqueue: The queue encountered an error!', err));
-
-conversionsQueue.on('cleaned', (jobs: IConversionJob[]) => {
-    const jobIdsStr = jobs.map(job => job.jobId).join(', ');
-    logger.info(`convqueue: ${jobs.length} terminated jobs have been deleted: ${jobIdsStr}`);
-});
-
-// JOB-RELATED QUEUE EVENTS
-//-------------------------
-
-conversionsQueue.on('progress', (job, progress) => {
-    logger.debug(`convqueue: job #${job.id} [${progress.type}] ${progress.message}`);
-});
-
-conversionsQueue.on('active', (job: Job) => logger.debug(`convqueue: job #${job.jobId} has started`, job.data));
-
-conversionsQueue.on('completed', (job: Job) => logger.debug(`convqueue: job #${job.jobId} is completed`, job.data));
-
-conversionsQueue.on('failed', (job: Job, err: any) => logger.error(`convqueue: job #${job.jobId} has failed!`, err));
+//=> Job-related events
+conversionsQueue.on('progress', handlers.onJobProgress);
+conversionsQueue.on('active', handlers.onJobActive);
+conversionsQueue.on('completed', handlers.onJobCompleted);
+conversionsQueue.on('failed', handlers.onJobFailed);
 
 export default conversionsQueue;

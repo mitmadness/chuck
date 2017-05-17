@@ -1,10 +1,7 @@
-import { IConversionJob, updateConversion } from './job';
+import { IConversionJob, IOrchestratorEvent } from './job';
 import { IStepModule, IStepsContext } from './steps/step';
 
 export async function processor(steps: IStepModule[], job: IConversionJob): Promise<void> {
-    //=> Set the jobId on the Conversion document
-    await updateConversion(job, { 'conversion.jobId': job.jobId });
-
     //=> Initialize context
     const stepsStack: IStepModule[] = [];
     const context: IStepsContext = { assetsPaths : []};
@@ -18,10 +15,11 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         const stepInfo = step.describe();
 
         //=> Signal progress
-        await Promise.all([
-            updateConversion(job, { 'conversion.progress.step': stepInfo.code }),
-            job.progress({ type: 'orchestrator', message: `Starting "${stepInfo.name}"`, step: stepInfo })
-        ]);
+        await job.progress<IOrchestratorEvent>({
+            type: 'orchestrator',
+            message: `Starting "${stepInfo.name}"`,
+            step: stepInfo
+        });
 
         //=> Execute the step
         try {
@@ -34,12 +32,6 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
 
     //=> Perform cleanup
     await cleanup('All steps have terminated successfuly');
-
-    //=> Mark conversion as terminated on the Conversion document
-    await updateConversion(job, {
-        'conversion.progress.completed': true,
-        'conversion.progress.step': null
-    });
 }
 
 export async function stepsCleanupProcessor(
@@ -51,10 +43,11 @@ export async function stepsCleanupProcessor(
     //=> Signal cleanup
     const stepNames = stepsStack.map(step => step.describe().code).join(', ');
 
-    await Promise.all([
-        updateConversion(job, { 'conversion.progress.step': 'cleanup' }),
-        job.progress({ type: 'orchestrator', message: `Performing cleanup for steps: ${stepNames} (${reason})` })
-    ]);
+    await job.progress<IOrchestratorEvent>({
+        type: 'orchestrator',
+        message: `Performing cleanup for steps: ${stepNames} (${reason})`,
+        step: { code: 'cleanup', name: 'Conversion artifacts cleanup', priority: Infinity }
+    });
 
     //=> Call each step's cleanup() function
     while (stepsStack.length) {
