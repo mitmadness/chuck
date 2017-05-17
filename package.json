@@ -46,6 +46,7 @@
     "morgan": "^1.8.1",
     "node-fetch": "^1.6.3",
     "pify": "^2.3.0",
+    "pug": "^2.0.0-rc.1",
     "source-map-support": "^0.4.15",
     "toureiro": "^0.2.13",
     "uuid": "^3.0.1",
