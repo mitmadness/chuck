@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@mitm/assetbundlecompiler": "^1.2.1",
+    "azure-storage": "^2.1.0",
     "body-parser": "^1.17.1",
     "bull": "^2.2.6",
     "cors": "^2.8.3",
