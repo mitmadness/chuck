@@ -17,7 +17,7 @@ export function describe(): IStepDescription {
 }
 
 export function shouldProcess(job: IConversionJob, context: IUploadBundleStepContext) {
-    return true;
+    return !!(context.assetBundlePath);
 }
 
 export async function process(job: IConversionJob, context: IUploadBundleStepContext): Promise<void> {
