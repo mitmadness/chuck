@@ -51,25 +51,25 @@ app.use(
     bodyParser.urlencoded({ extended: true })
 );
 
-//=> Mount Toureiro
-if (config.toureiro.enable) {
-    const toureiroAuth = basicAuth({
+const auth = basicAuth({
         challenge: true,
         users: { [config.toureiro.user]: config.toureiro.password }
     });
 
+//=> Mount Toureiro
+if (config.toureiro.enable) {
     const toureiroConf = toureiro({
         redis: { host: config.redis.host, port: config.redis.port, db: 1 }
     });
 
-    app.use('/toureiro', toureiroAuth, toureiroConf);
+    app.use('/toureiro', auth, toureiroConf);
 }
 
 //=> Mount the API
 app.use('/api', api);
 
 //=> Route of the admin interface
-app.use('/admin', admin);
+app.use('/admin', auth, admin);
 
 //=> Start the HTTP server
 app.listen(port, () => {
