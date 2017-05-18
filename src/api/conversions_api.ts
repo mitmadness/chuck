@@ -11,7 +11,10 @@ router.post('/', hasValidApiKey(), wrapAsync(async (req, res, next) => {
     const conversionData = safeConversionData(req.body);
     const conversion = await Conversion.create(conversionData);
 
-    await converterQueue.add(conversion);
+    const job = await converterQueue.add(conversion);
+
+    conversion.conversion.jobId = job.jobId;
+    await conversion.save();
 
     res.status(202).json(safeOutData(conversion));
 

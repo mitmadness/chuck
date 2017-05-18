@@ -38,8 +38,6 @@ export async function onJobProgress(job: IProgressReportJob, progress: IOrchestr
 
 export async function onJobActive(job: IConversionJob): Promise<void> {
     logger.debug(`convqueue: job #${job.jobId} has started`, job.data);
-
-    await updateConversion(job, { 'conversion.jobId': job.jobId });
 }
 
 export async function onJobCompleted(job: IConversionJob): Promise<void> {
