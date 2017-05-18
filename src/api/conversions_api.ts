@@ -1,5 +1,5 @@
 import * as express from 'express';
-import * as sse from 'sse-express';
+import { sse, ISSECapableResponse } from '@toverux/expresse';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import converterQueue from '../converter/queue';
 import { IConversionEvent, IProgressReportJob } from '../converter/job';
@@ -34,18 +34,13 @@ router.get('/:code', wrapAsync(async (req, res, next) => {
     next();
 }));
 
-router.get('/:code/events', wrapAsync(async (req, res: sse.ISSEResponse, next) => {
+router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableResponse) => {
     const conversion = await Conversion.findOne({ code: req.params.code });
     if (!conversion) {
-        throw new NotFoundError();
+        return res.sse('error', new NotFoundError());
+    } else if (conversion.conversion.progress.completed) {
+        return res.sse('error', new GoneError('This conversion is terminated'));
     }
-
-    if (conversion.conversion.progress.completed) {
-        throw new GoneError('This conversion is terminated');
-    }
-
-    //=> Invoke the sse middleware by hand
-    sse(req, res, () => { /* NextFunction, noop */ });
 
     //=> Listen queue for progress events, filter, and send if the jobId matches
     converterQueue.on('progress', (job: IProgressReportJob, progress: IConversionEvent) => {

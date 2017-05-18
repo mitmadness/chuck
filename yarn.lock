@@ -16,6 +16,10 @@
     mocha "^3.2.0"
     pify "^2.3.0"
 
+"@toverux/expresse@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@toverux/expresse/-/expresse-1.0.0.tgz#baea340f5dd7840007743734d5ce879a8847a0d7"
+
 "@types/body-parser@^1.16.3":
   version "1.16.3"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.16.3.tgz#bc2b9a181f2fa85c80f1ecacd8a05cf1414b85a3"
