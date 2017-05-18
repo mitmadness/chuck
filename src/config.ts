@@ -36,12 +36,12 @@ const config: IChuckConfig = {
         port: parseInt(env.REDIS_PORT, 10) || 6379
     },
     toureiro: {
-        enable: false,
+        enable: env.TOUREIRO_ENABLE === 'true' || false,
         user: env.TOUREIRO_USER || 'admin',
         password: env.TOUREIRO_PASSWORD || 'admin'
     },
     unityPath: env.UNITY_EDITOR_PATH,
-    enableAzureEmulator: env.ENABLE_AZURE_EMULATOR === 'true'
+    enableAzureEmulator: env.ENABLE_AZURE_EMULATOR === 'true' || false
 };
 
 export default config;
