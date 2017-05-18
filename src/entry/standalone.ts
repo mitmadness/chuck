@@ -59,12 +59,11 @@ const auth = basicAuth({
 //=> Mount Toureiro
 if (config.toureiro.enable) {
     const toureiroConf = toureiro({
-        redis: { host: config.redis.host, port: config.redis.port, db: 1 }
+        redis: { host: config.redis.host, port: config.redis.port, db: 0 }
     });
 
     app.use('/toureiro', auth, toureiroConf);
 }
-
 //=> Mount the API
 app.use('/api', api);
 

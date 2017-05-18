@@ -8,7 +8,7 @@ export interface IChuckConfig {
     env: Env;
     serverPort: number;
     mongoUrl: string;
-    redis: { host: string; port: number; };
+    redis: { host: string; port: number; db:number};
     toureiro: { enable: boolean, user: string; password: string; };
     unityPath: string|undefined;
     enableAzureEmulator: boolean;
@@ -33,7 +33,8 @@ const config: IChuckConfig = {
     mongoUrl: env.MONGO_URL || 'mongodb://localhost/chuck',
     redis: {
         host: env.REDIS_HOST || 'localhost',
-        port: parseInt(env.REDIS_PORT, 10) || 6379
+        port: parseInt(env.REDIS_PORT, 10) || 6379,
+        db: parseInt(env.REDIS_DB, 10) || 0
     },
     toureiro: {
         enable: env.TOUREIRO_ENABLE === 'true' || false,

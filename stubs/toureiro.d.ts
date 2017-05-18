@@ -1,11 +1,11 @@
 declare module 'toureiro' {
-    import { Handler } from 'express';
+    import { RequestHandler } from 'express';
 
-    function toureiro(options: toureiro.IRedisOptions): Handler;
+    function toureiro(options: toureiro.IRedisOptions): RequestHandler;
 
     namespace toureiro {
         interface IRedisOptions {
-            redis: { host: string, port: number, db: number };
+            redis: { host: string, port: number, db: number, auth_pass?: string };
         }
     }
 
