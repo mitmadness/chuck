@@ -10,7 +10,7 @@ import config from '../config';
 import logger, { morganStreamWriter } from '../logger';
 import { connectDatabase } from '../mongoose';
 import api from '../api';
-import admin from '../admin'
+import admin from '../admin';
 import converterQueue from '../converter/queue';
 
 //=> Resume the conversions queue
