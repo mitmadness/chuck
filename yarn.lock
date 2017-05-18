@@ -880,7 +880,7 @@ express@4.14.x:
     utils-merge "1.0.0"
     vary "~1.1.0"
 
-express@^4.15.2:
+express@^4.13.4, express@^4.15.2:
   version "4.15.2"
   resolved "https://registry.yarnpkg.com/express/-/express-4.15.2.tgz#af107fc148504457f2dca9a6f2571d7129b97b35"
   dependencies:
@@ -2598,6 +2598,12 @@ split@0.3:
   resolved "https://registry.yarnpkg.com/split/-/split-0.3.3.tgz#cd0eea5e63a211dfff7eb0f091c4133e2d0dd28f"
   dependencies:
     through "2"
+
+sse-express@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/sse-express/-/sse-express-1.0.1.tgz#eec5bc3c6cfdc6eb43ddb45e5dfbff7b85c19647"
+  dependencies:
+    express "^4.13.4"
 
 sshpk@^1.7.0:
   version "1.13.0"
