@@ -33,8 +33,8 @@ export class FluentChuckMaker {
         return this;
     }
 
-    public connectRedis(host: string, port: number): this {
-        this.config.redis = { host, port };
+    public connectRedis(host: string, port: number, db: number): this {
+        this.config.redis = { host, port, db };
 
         return this;
     }
