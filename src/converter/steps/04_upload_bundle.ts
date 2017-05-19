@@ -54,18 +54,16 @@ export async function process(job: IConversionJob, context: IUploadBundleStepCon
 
         const total = upload.getTotalSize(true);
 
-        progressInterval = setInterval(async () => {
-            await job.progress({
-                type: 'upload-bundle',
-                message: `Upload progress: ${upload.getCompletePercent(0)} (${upload.getCompleteSize(true)}/${total})`,
-                uploadStats: {
-                    totalSize: upload.totalSize,
-                    completeSize: upload.completeSize,
-                    completePercent: upload.getCompletePercent(2),
-                    averageSpeed: upload.getAverageSpeed(false)
-                }
-            });
-        }, 1000);
+        progressInterval = setInterval(async () => await job.progress({
+            type: 'upload-bundle',
+            message: `Upload progress: ${upload.getCompletePercent(0)} (${upload.getCompleteSize(true)}/${total})`,
+            uploadStats: {
+                totalSize: upload.totalSize,
+                completeSize: upload.completeSize,
+                completePercent: upload.getCompletePercent(2),
+                averageSpeed: upload.getAverageSpeed(false)
+            }
+        }), 1000);
     });
 }
 
