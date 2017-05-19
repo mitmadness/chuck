@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
+import { IBuildOptionsMap } from '@mitm/assetbundlecompiler';
 import * as uuid from 'uuid';
 
 export interface IConversion {
@@ -11,6 +12,11 @@ export interface IConversion {
         sharedAccessSignatureToken: string;
         container: string;
     };
+    bundleCompiler: {
+        targeting: string;
+        buildOptions: IBuildOptionsMap;
+        editorScripts: string[];
+    }
     conversion: {
         jobId: string|null;
         progress: {
@@ -41,7 +47,29 @@ const ConversionSchema = new Schema({
         sharedAccessSignatureToken: { type: String, required: true },
         container : { type: String, required: true }
     },
-
+    bundleCompiler: {
+        targeting: {type: String, required: true },
+        buildOptions: {
+            type: Schema.Types.Mixed,
+            default: {}, 
+            validate(buildOptions: any){
+                for(let property in buildOptions){
+                    if (Object.hasOwnProperty(property)) {
+                        if (typeof property !== 'boolean')
+                            return false;
+                    }
+                }
+                return true;
+           } 
+        },
+        editorScripts: {
+            type: Array,
+            default: [],
+            validate(script: any[]) {
+                return script.every(value => typeof value === 'string');
+            },
+        }
+    },
     conversion: {
         jobId: { type: String, default: null },
         progress: {
@@ -50,14 +78,15 @@ const ConversionSchema = new Schema({
             error: { type: Schema.Types.Mixed, default: null }
         }
     }
-});
+}, { minimize: false });
 
 export function safeData({
     assetBundleName,
     assetUrls,
-    azure
+    azure,
+    bundleCompiler
 }: IConversion) {
-    return { assetBundleName, assetUrls, azure };
+    return { assetBundleName, assetUrls, azure, bundleCompiler };
 }
 
 export const Conversion = mongoose.model<IConversionModel>('Conversion', ConversionSchema);

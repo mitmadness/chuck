@@ -2,12 +2,10 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
-import { BuildTargets, bundle, setUnityPath } from '@mitm/assetbundlecompiler';
+import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
-
-const { WebGL } = BuildTargets;
 
 export interface IAssetBundleStepContext extends IStepsContext {
     assetBundleDir: string;
@@ -39,10 +37,15 @@ export async function process(job: IConversionJob, context: IAssetBundleStepCont
         setUnityPath(config.unityPath);
     }
 
+    console.log(job.data.bundleCompiler.buildOptions);
+
     await bundle(...context.assetsPaths)
-        .targeting(WebGL)
+        .targeting(job.data.bundleCompiler.targeting)
+        .includingEditorScripts(...job.data.bundleCompiler.editorScripts)
+        .withBuildOptions(job.data.bundleCompiler.buildOptions)
         .withLogger(async (log) => await job.progress({ type: 'exec-assetbundlecompiler', message: log }) )
-        .to(assetBundlePath);
+        .to(assetBundlePath)
+        .catch(error => Promise.reject(error));
 }
 
 export async function cleanup(context: Readonly<IAssetBundleStepContext>): Promise<void> {
