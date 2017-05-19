@@ -6,6 +6,7 @@ export type Env = 'development'|'production';
 
 export interface IChuckConfig {
     env: Env;
+    logLevel: string;
     serverPort: number;
     mongoUrl: string;
     redis: { host: string; port: number; db: number };
@@ -29,6 +30,7 @@ const env = dotenv.parse(envSource);
 //=> Hydrate config with the .env file merged with default values
 const config: IChuckConfig = {
     env: env.NODE_ENV || process.env.NODE_ENV || 'development',
+    logLevel: env.LOG_LEVEL || 'debug',
     serverPort: parseInt(env.SERVER_PORT, 10) || 3001,
     mongoUrl: env.MONGO_URL || 'mongodb://localhost/chuck',
     redis: {

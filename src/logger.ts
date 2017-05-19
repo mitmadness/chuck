@@ -5,7 +5,7 @@ import config from './config';
 const logger = new winston.Logger({
     transports: [
         new winston.transports.Console({
-            level: 'debug',
+            level: config.logLevel,
             json: false,
             colorize: true,
             timestamp: config.env == 'production'
