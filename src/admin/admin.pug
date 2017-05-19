@@ -1,0 +1,17 @@
+html
+  head
+    title= 'Admin Chuck'
+  body
+    form(action='' method='post')
+      input(type='submit' name='generateKey' value='Generate a new API key')
+    table
+      caption List of API Keys 
+      
+      each val in keys
+        tr
+          th= val.key
+          th
+            form(action="admin/delete/"+val.key method='post')
+              input(type='submit' name='deleteKey' value='Delete')
+
+    a(href='/toureiro') Job list

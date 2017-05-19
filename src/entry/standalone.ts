@@ -10,6 +10,7 @@ import config from '../config';
 import logger, { morganStreamWriter } from '../logger';
 import { connectDatabase } from '../mongoose';
 import api from '../api';
+import admin from '../admin';
 import converterQueue from '../converter/queue';
 
 //=> Resume the conversions queue
@@ -21,6 +22,10 @@ converterQueue.resume().catch((error) => {
 //=> Create an Express app
 const app = express();
 const port = config.serverPort;
+
+//=>Load the view engine Pug
+app.set('view engine', 'pug');
+app.set('views', './src/admin');
 
 //=> Connect to the MongoDB database
 connectDatabase(config.mongoUrl).catch((error) => {
@@ -46,22 +51,24 @@ app.use(
     bodyParser.urlencoded({ extended: true })
 );
 
-//=> Mount Toureiro
-if (config.toureiro.enable) {
-    const toureiroAuth = basicAuth({
+const auth = basicAuth({
         challenge: true,
         users: { [config.toureiro.user]: config.toureiro.password }
     });
 
+//=> Mount Toureiro
+if (config.toureiro.enable) {
     const toureiroConf = toureiro({
-        redis: { host: config.redis.host, port: config.redis.port, db: 1 }
+        redis: { host: config.redis.host, port: config.redis.port, db: 0 }
     });
 
-    app.use('/toureiro', toureiroAuth, toureiroConf);
+    app.use('/toureiro', auth, toureiroConf);
 }
-
 //=> Mount the API
 app.use('/api', api);
+
+//=> Route of the admin interface
+app.use('/admin', auth, admin);
 
 //=> Start the HTTP server
 app.listen(port, () => {
