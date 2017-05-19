@@ -30,7 +30,7 @@ export function onQueueCleaned(jobs: IConversionJob[]): void {
 //-------------------------
 
 export async function onJobProgress(job: IProgressReportJob, progress: IOrchestratorEvent): Promise<void> {
-    logger.debug(`convqueue: job #${job.id} [${progress.type}] ${progress.message}`);
+    logger.verbose(`convqueue: job #${job.id} [${progress.type}] ${progress.message}`);
 
     if (progress.type == 'orchestrator') {
         await updateConversion(job, { 'conversion.progress.step': progress.step.code });
@@ -38,11 +38,11 @@ export async function onJobProgress(job: IProgressReportJob, progress: IOrchestr
 }
 
 export async function onJobActive(job: IConversionJob): Promise<void> {
-    logger.debug(`convqueue: job #${job.jobId} has started`, job.data);
+    logger.verbose(`convqueue: job #${job.jobId} has started`, job.data);
 }
 
 export async function onJobCompleted(job: IConversionJob): Promise<void> {
-    logger.debug(`convqueue: job #${job.jobId} is completed`, job.data);
+    logger.verbose(`convqueue: job #${job.jobId} is completed`, job.data);
 
     await updateConversion(job, {
         'conversion.progress.completed': true,

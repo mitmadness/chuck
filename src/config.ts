@@ -30,7 +30,7 @@ const env = dotenv.parse(envSource);
 //=> Hydrate config with the .env file merged with default values
 const config: IChuckConfig = {
     env: env.NODE_ENV || process.env.NODE_ENV || 'development',
-    logLevel: env.LOG_LEVEL || 'debug',
+    logLevel: env.LOG_LEVEL || 'verbose',
     serverPort: parseInt(env.SERVER_PORT, 10) || 3001,
     mongoUrl: env.MONGO_URL || 'mongodb://localhost/chuck',
     redis: {
