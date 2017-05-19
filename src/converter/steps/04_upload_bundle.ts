@@ -1,8 +1,8 @@
 import * as azure from 'azure-storage';
 import * as pify from 'pify';
+import config from '../../config';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
-import config from '../../config';
 
 export interface IUploadBundleStepContext extends IStepsContext {
     assetBundlePath: string;
@@ -16,7 +16,7 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context: IUploadBundleStepContext) {
+export function shouldProcess(job: IConversionJob, context: IUploadBundleStepContext): boolean {
     return !!(context.assetBundlePath);
 }
 
@@ -35,12 +35,6 @@ export async function process(job: IConversionJob, context: IUploadBundleStepCon
     const blobName = job.data.assetBundleName;
     const container = job.data.azure.container;
 
-    const createContainer = blobService.createContainerIfNotExists.bind(blobService);
-    await pify(createContainer)(container, {publicAccessLevel : 'blob'});
-
-    const createBlockBlobFromLocalFile = blobService.createBlockBlobFromLocalFile.bind(blobService);
-    await pify(createBlockBlobFromLocalFile)(container, blobName, context.assetBundlePath);
-
-    const blobUrl = blobService.getUrl(container, blobName);
-    context.assetsPaths = context.assetsPaths.map(path => path = blobUrl);
+    const createBlob = pify(blobService.createBlockBlobFromLocalFile.bind(blobService));
+    await createBlob(container, blobName, context.assetBundlePath);
 }
