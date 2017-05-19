@@ -53,9 +53,9 @@ export async function onJobCompleted(job: IConversionJob): Promise<void> {
 export async function onJobFailed(job: IConversionJob, error: any): Promise<void> {
     logger.error(`convqueue: job #${job.jobId} has failed!`, error);
 
+    // we don't update conversion.step to let the client know where the fail occured
     await updateConversion(job, {
         'conversion.progress.completed': true,
-        'conversion.progress.step': null,
         'conversion.progress.error': safeErrorSerialize(error)
     });
 }
