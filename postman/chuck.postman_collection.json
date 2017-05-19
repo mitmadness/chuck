@@ -40,7 +40,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"assetBundleName\": \"myassetbundle.ab\",\n  \"assetUrls\": [\"http://site/house.ifc\"],\n  \"azure\": {\n    \"account\": \"mitm\",\n    \"key\": \"apikey\",\n    \"container\": \"assetbundles\"\n  }\n}"
+					"raw": "{\n  \"assetBundleName\": \"myassetbundle.ab\",\n  \"assetUrls\": [\n    \"https://i.ytimg.com/vi/qIIN64bUbsI/maxresdefault.jpg\"\n  ],\n  \"azure\": {\n    \"host\": \"{{azureHost}}\",\n    \"container\": \"{{azureContainer}}\",\n    \"sharedAccessSignatureToken\": \"{{azuresharedAccessSignatureToken}}\"\n  }\n}"
 				},
 				"description": "Crée une nouvelle demande de conversion, placée dans la queue de conversion."
 			},
