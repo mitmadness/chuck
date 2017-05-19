@@ -1,4 +1,5 @@
 import logger from '../logger';
+import { safeErrorSerialize } from '../safe_error_serialize';
 import { IConversionJob, IOrchestratorEvent, IProgressReportJob, updateConversion } from './job';
 
 // GLOBAL QUEUE EVENTS
@@ -52,13 +53,9 @@ export async function onJobCompleted(job: IConversionJob): Promise<void> {
 export async function onJobFailed(job: IConversionJob, error: any): Promise<void> {
     logger.error(`convqueue: job #${job.jobId} has failed!`, error);
 
-    if (error instanceof Error) {
-        error = { message: error.message, ...error };
-    }
-
     await updateConversion(job, {
         'conversion.progress.completed': true,
         'conversion.progress.step': null,
-        'conversion.progress.error': error
+        'conversion.progress.error': safeErrorSerialize(error)
     });
 }

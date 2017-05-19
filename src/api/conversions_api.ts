@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { sse, ISSECapableResponse } from '@toverux/expresse';
+import { safeErrorSerialize } from '../safe_error_serialize';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import converterQueue from '../converter/queue';
 import { IConversionEvent, IProgressReportJob } from '../converter/job';
@@ -37,9 +38,9 @@ router.get('/:code', wrapAsync(async (req, res, next) => {
 router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableResponse) => {
     const conversion = await Conversion.findOne({ code: req.params.code });
     if (!conversion) {
-        return res.sse('error', new NotFoundError());
+        return res.sse('error', safeErrorSerialize(new NotFoundError()));
     } else if (conversion.conversion.progress.completed) {
-        return res.sse('error', new GoneError('This conversion is terminated'));
+        return res.sse('error', safeErrorSerialize(new GoneError('This conversion is terminated')));
     }
 
     //=> Listen queue for progress events, filter, and send if the jobId matches
@@ -53,7 +54,7 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
 
     job.finished().then(
         val => res.sse('end-completed', val),
-        err => res.sse('end-failed', err)
+        err => res.sse('end-failed', safeErrorSerialize(err))
     );
 }));
 

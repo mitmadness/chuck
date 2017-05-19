@@ -2,6 +2,7 @@ import { ErrorRequestHandler, Handler, NextFunction, Request, Response } from 'e
 import logger from '../logger';
 import { HttpError, UnauthorizedError } from './http_errors';
 import { wrapAsync } from '../express_utils';
+import { safeErrorSerialize } from '../safe_error_serialize';
 import { isKeyValid } from './api_keys_cache';
 
 export function hasValidApiKey(): Handler {
@@ -41,10 +42,7 @@ export function errorHandler(): ErrorRequestHandler {
         }
 
         //=> In all other cases, return a 500 error
-        res.status(500).json({
-            name: 'FatalError',
-            message: 'Fatal server error - please retry'
-        });
+        res.status(500).json(safeErrorSerialize(err));
 
         //=> Log it because that's unexpected
         logger.error(err);
