@@ -16,7 +16,7 @@ export interface IConversion {
         targeting: string;
         buildOptions: IBuildOptionsMap;
         editorScripts: string[];
-    }
+    };
     conversion: {
         jobId: string|null;
         progress: {
@@ -51,16 +51,16 @@ const ConversionSchema = new Schema({
         targeting: {type: String, required: true },
         buildOptions: {
             type: Schema.Types.Mixed,
-            default: {}, 
-            validate(buildOptions: any){
-                for(let property in buildOptions){
+            default: {},
+            validate(buildOptions: any) {
+                for (const property in buildOptions) {
                     if (Object.hasOwnProperty(property)) {
                         if (typeof property !== 'boolean')
                             return false;
                     }
                 }
                 return true;
-           } 
+           }
         },
         editorScripts: {
             type: Array,

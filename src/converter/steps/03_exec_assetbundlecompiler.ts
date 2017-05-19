@@ -37,8 +37,6 @@ export async function process(job: IConversionJob, context: IAssetBundleStepCont
         setUnityPath(config.unityPath);
     }
 
-    console.log(job.data.bundleCompiler.buildOptions);
-
     await bundle(...context.assetsPaths)
         .targeting(job.data.bundleCompiler.targeting)
         .includingEditorScripts(...job.data.bundleCompiler.editorScripts)

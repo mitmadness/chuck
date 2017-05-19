@@ -8,7 +8,7 @@ export interface IChuckConfig {
     env: Env;
     serverPort: number;
     mongoUrl: string;
-    redis: { host: string; port: number; db:number};
+    redis: { host: string; port: number; db: number };
     toureiro: { enable: boolean, user: string; password: string; };
     unityPath: string|undefined;
     enableAzureEmulator: boolean;
