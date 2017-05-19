@@ -1,11 +1,12 @@
 import * as azure from 'azure-storage';
-import * as pify from 'pify';
+import { setInterval } from 'timers';
 import config from '../../config';
 import { IConversionJob } from '../job';
-import { IStepDescription, IStepsContext } from './step';
+import { IStepDescription } from './step';
+import { IExecAssetBundleCompilerStepContext } from './03_exec_assetbundlecompiler';
 
-export interface IUploadBundleStepContext extends IStepsContext {
-    assetBundlePath: string;
+export interface IUploadBundleStepContext extends IExecAssetBundleCompilerStepContext {
+    assetBundleUrl: string;
 }
 
 export function describe(): IStepDescription {
@@ -23,18 +24,56 @@ export function shouldProcess(job: IConversionJob, context: IUploadBundleStepCon
 export async function process(job: IConversionJob, context: IUploadBundleStepContext): Promise<void> {
     await job.progress({ type: 'exec-assetbundlecompiler', message: `Upload "${context.assetBundlePath}" to Azure` });
 
-    let blobService: azure.BlobService;
-
-    if (config.enableAzureEmulator) {
-        const devStoreCreds = azure.generateDevelopmentStorageCredentials();
-        blobService = azure.createBlobService(devStoreCreds);
-    } else {
-        blobService = azure.createBlobServiceWithSas(job.data.azure.host, job.data.azure.sharedAccessSignatureToken);
-    }
+    const blobService = getBlobService(job);
 
     const blobName = job.data.assetBundleName;
     const container = job.data.azure.container;
 
-    const createBlob = pify(blobService.createBlockBlobFromLocalFile.bind(blobService));
-    await createBlob(container, blobName, context.assetBundlePath);
+    return new Promise<void>((resolve, reject) => {
+        let progressInterval: NodeJS.Timer;
+
+        const upload = blobService.createBlockBlobFromLocalFile(
+            container, blobName, context.assetBundlePath,
+            async (err, blobResult) => {
+                clearInterval(progressInterval);
+
+                if (err) return reject(err);
+
+                const url = blobService.getUrl(container, blobName);
+
+                await job.progress({
+                    type: 'upload-bundle',
+                    message: `Upload ended with success`,
+                    blobUrl: url, blobResult
+                });
+
+                context.assetBundleUrl = url;
+                resolve();
+            }
+        );
+
+        const total = upload.getTotalSize(true);
+
+        progressInterval = setInterval(async () => {
+            await job.progress({
+                type: 'upload-bundle',
+                message: `Upload progress: ${upload.getCompletePercent(0)} (${upload.getCompleteSize(true)}/${total})`,
+                uploadStats: {
+                    totalSize: upload.totalSize,
+                    completeSize: upload.completeSize,
+                    completePercent: upload.getCompletePercent(2),
+                    averageSpeed: upload.getAverageSpeed(false)
+                }
+            });
+        }, 1000);
+    });
+}
+
+function getBlobService(job: IConversionJob): azure.BlobService {
+    if (config.enableAzureEmulator) {
+        const devStoreCreds = azure.generateDevelopmentStorageCredentials();
+        return azure.createBlobService(devStoreCreds);
+    } else {
+        return azure.createBlobServiceWithSas(job.data.azure.host, job.data.azure.sharedAccessSignatureToken);
+    }
 }

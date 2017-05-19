@@ -7,7 +7,7 @@ import config from '../../config';
 import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
 
-export interface IAssetBundleStepContext extends IStepsContext {
+export interface IExecAssetBundleCompilerStepContext extends IStepsContext {
     assetBundleDir: string;
     assetBundlePath: string;
 }
@@ -20,11 +20,11 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context: IAssetBundleStepContext): boolean {
+export function shouldProcess(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): boolean {
     return !!(context.assetsPaths && context.assetsPaths.length);
 }
 
-export async function process(job: IConversionJob, context: IAssetBundleStepContext): Promise<void> {
+export async function process(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
     const assetBundlePath = path.join(tmpDir, job.data.assetBundleName);
 
@@ -46,7 +46,7 @@ export async function process(job: IConversionJob, context: IAssetBundleStepCont
         .catch(error => Promise.reject(error));
 }
 
-export async function cleanup(context: Readonly<IAssetBundleStepContext>): Promise<void> {
+export async function cleanup(context: Readonly<IExecAssetBundleCompilerStepContext>): Promise<void> {
     await pify(fs.unlink)(context.assetBundlePath);
     await pify(fs.rmdir)(context.assetBundleDir);
 }
