@@ -1,4 +1,4 @@
-import defaultConfig, { Env, IChuckConfig } from '../config';
+import defaultConfig, { EnvType, IChuckConfig } from '../config';
 
 export { IConversionJob } from '../converter/job';
 export { IStepModule, IStepDescription, IStepsContext } from '../converter/steps/step';
@@ -15,7 +15,7 @@ export class FluentChuckMaker {
         this.config = rawConfig;
     }
 
-    public inEnv(env: Env): this {
+    public inEnv(env: EnvType): this {
         this.config.env = env;
 
         return this;

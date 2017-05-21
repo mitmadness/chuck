@@ -72,7 +72,7 @@ export async function process(job: IConversionJob, context: IUploadBundleStepCon
 }
 
 function getBlobService(job: IConversionJob): azure.BlobService {
-    if (config.enableAzureEmulator) {
+    if (config.azure.enableEmu) {
         const devStoreCreds = azure.generateDevelopmentStorageCredentials();
         return azure.createBlobService(devStoreCreds);
     } else {
