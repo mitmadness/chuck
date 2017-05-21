@@ -40,6 +40,6 @@ export interface IProgressReportJob {
     data: IConversion;
 }
 
-export function updateConversion(job: IConversionDataJob, fields: object): DocumentQuery<any, IConversionModel> {
-    return Conversion.findOneAndUpdate({ code: job.data.code }, { $set: fields });
+export function updateConversion(job: IConversionDataJob, update: object): DocumentQuery<any, IConversionModel> {
+    return Conversion.findOneAndUpdate({ code: job.data.code }, update);
 }

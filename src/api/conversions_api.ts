@@ -25,7 +25,7 @@ router.post('/', hasValidApiKey(), wrapAsync(async (req, res, next) => {
 }));
 
 router.get('/:code', wrapAsync(async (req, res, next) => {
-    const conversion = await Conversion.findOne({ code: req.params.code });
+    const conversion = await Conversion.findOne({ code: req.params.code }, { 'conversion.logs': false });
     if (!conversion) {
         throw new NotFoundError();
     }
@@ -39,7 +39,7 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
     const conversion = await Conversion.findOne({ code: req.params.code });
     if (!conversion) {
         return res.sse('error', safeErrorSerialize(new NotFoundError()));
-    } else if (conversion.conversion.progress.completed) {
+    } else if (conversion.conversion.isCompleted) {
         return res.sse('error', safeErrorSerialize(new GoneError('This conversion is terminated')));
     }
 

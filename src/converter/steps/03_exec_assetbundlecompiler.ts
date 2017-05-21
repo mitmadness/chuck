@@ -37,13 +37,14 @@ export async function process(job: IConversionJob, context: IExecAssetBundleComp
         setUnityPath(config.unityPath);
     }
 
+    const options = job.data.compilerOptions;
+
     await bundle(...context.assetsPaths)
-        .targeting(job.data.bundleCompiler.targeting)
-        .includingEditorScripts(...job.data.bundleCompiler.editorScripts)
-        .withBuildOptions(job.data.bundleCompiler.buildOptions)
+        .targeting(options.targeting)
+        .includingEditorScripts(...options.editorScripts)
+        .withBuildOptions(options.buildOptions)
         .withLogger(async (log) => await job.progress({ type: 'exec-assetbundlecompiler', message: log }) )
-        .to(assetBundlePath)
-        .catch(error => Promise.reject(error));
+        .to(assetBundlePath);
 }
 
 export async function cleanup(context: Readonly<IExecAssetBundleCompilerStepContext>): Promise<void> {

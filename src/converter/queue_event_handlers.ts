@@ -32,9 +32,16 @@ export function onQueueCleaned(jobs: IConversionJob[]): void {
 export async function onJobProgress(job: IProgressReportJob, progress: IOrchestratorEvent): Promise<void> {
     logger.verbose(`convqueue: job #${job.id} [${progress.type}] ${progress.message}`);
 
-    if (progress.type == 'orchestrator') {
-        await updateConversion(job, { 'conversion.progress.step': progress.step.code });
-    }
+    let updateQuery = {
+        $push: { 'conversion.logs': progress }
+    };
+
+    progress.type == 'orchestrator' && (updateQuery = {
+        ...updateQuery,
+        $set: { 'conversion.step': progress.step.code }
+    });
+
+    await updateConversion(job, updateQuery);
 }
 
 export async function onJobActive(job: IConversionJob): Promise<void> {
@@ -45,8 +52,10 @@ export async function onJobCompleted(job: IConversionJob): Promise<void> {
     logger.verbose(`convqueue: job #${job.jobId} is completed`, job.data);
 
     await updateConversion(job, {
-        'conversion.progress.completed': true,
-        'conversion.progress.step': null
+        $set: {
+            'conversion.isCompleted': true,
+            'conversion.step': null
+        }
     });
 }
 
@@ -55,7 +64,9 @@ export async function onJobFailed(job: IConversionJob, error: any): Promise<void
 
     // we don't update conversion.step to let the client know where the fail occured
     await updateConversion(job, {
-        'conversion.progress.completed': true,
-        'conversion.progress.error': safeErrorSerialize(error)
+        $set: {
+            'conversion.isCompleted': true,
+            'conversion.error': safeErrorSerialize(error)
+        }
     });
 }

@@ -2,28 +2,31 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 import { IBuildOptionsMap } from '@mitm/assetbundlecompiler';
 import * as uuid from 'uuid';
+import { IConversionEvent } from '../converter/job';
 
 export interface IConversion {
     code: string;
     assetBundleName: string;
     assetUrls: string[];
+
     azure: {
         host: string;
         sharedAccessSignatureToken: string;
         container: string;
     };
-    bundleCompiler: {
+
+    compilerOptions: {
         targeting: string;
         buildOptions: IBuildOptionsMap;
         editorScripts: string[];
     };
+
     conversion: {
         jobId: string|null;
-        progress: {
-            completed: boolean;
-            step: string|null;
-            error: any|null;
-        };
+        isCompleted: boolean;
+        step: string|null;
+        error: any|null;
+        logs: IConversionEvent[]
     };
 }
 
@@ -47,36 +50,30 @@ const ConversionSchema = new Schema({
         sharedAccessSignatureToken: { type: String, required: true },
         container : { type: String, required: true }
     },
-    bundleCompiler: {
-        targeting: {type: String, required: true },
+
+    compilerOptions: {
+        targeting: { type: String, required: true },
         buildOptions: {
             type: Schema.Types.Mixed,
-            default: {},
-            validate(buildOptions: any) {
-                for (const property in buildOptions) {
-                    if (Object.hasOwnProperty(property)) {
-                        if (typeof property !== 'boolean')
-                            return false;
-                    }
-                }
-                return true;
-           }
+            default: {}
         },
         editorScripts: {
             type: Array,
             default: [],
             validate(script: any[]) {
                 return script.every(value => typeof value === 'string');
-            },
+            }
         }
     },
+
     conversion: {
         jobId: { type: String, default: null },
-        progress: {
-            completed: { type: Boolean, default: false },
-            step: { type: String, default: null },
-            error: { type: Schema.Types.Mixed, default: null }
-        }
+        isCompleted: { type: Boolean, default: false },
+        step: { type: String, default: null },
+        error: { type: Schema.Types.Mixed, default: null },
+        logs: [
+            { type: Schema.Types.Mixed }
+        ]
     }
 }, { minimize: false });
 
@@ -84,9 +81,9 @@ export function safeData({
     assetBundleName,
     assetUrls,
     azure,
-    bundleCompiler
+    compilerOptions
 }: IConversion) {
-    return { assetBundleName, assetUrls, azure, bundleCompiler };
+    return { assetBundleName, assetUrls, azure, compilerOptions };
 }
 
 export const Conversion = mongoose.model<IConversionModel>('Conversion', ConversionSchema);
