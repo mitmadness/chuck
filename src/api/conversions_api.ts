@@ -36,11 +36,17 @@ router.get('/:code', wrapAsync(async (req, res, next) => {
 }));
 
 router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableResponse) => {
+    const isReplay = req.query.replay !== 'false';
+
     const conversion = await Conversion.findOne({ code: req.params.code });
     if (!conversion) {
         return res.sse('error', safeErrorSerialize(new NotFoundError()));
-    } else if (conversion.conversion.isCompleted) {
+    } else if (!isReplay && conversion.conversion.isCompleted) {
         return res.sse('error', safeErrorSerialize(new GoneError('This conversion is terminated')));
+    }
+
+    if (isReplay && conversion.conversion.logs) {
+        conversion.conversion.logs.forEach(progress => res.sse(progress.type, progress));
     }
 
     //=> Listen queue for progress events, filter, and send if the jobId matches
@@ -49,11 +55,11 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
         res.sse(progress.type, progress);
     });
 
-    //=> Get the job instance and watch for completion
+    //=> Get the job instance and watch for completion (works even on replay mode)
     const job = await converterQueue.getJob(conversion.conversion.jobId as string);
 
     job.finished().then(
-        val => res.sse('end-completed', val),
+        () => res.sse('end-completed', 'Job finished with success'),
         err => res.sse('end-failed', safeErrorSerialize(err))
     );
 }));
