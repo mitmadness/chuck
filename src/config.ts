@@ -37,7 +37,7 @@ const config: IChuckConfig = {
     },
     unityPath: process.env.CHUCK_UNITY_EDITOR_PATH,
     azure: {
-        enableEmu: process.env.CHUCK_ENABLEAZUREEMULATOR === 'true'
+        enableEmu: process.env.CHUCK_AZURE_ENABLEEMU === 'true'
     }
 };
 
