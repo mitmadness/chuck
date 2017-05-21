@@ -55,8 +55,8 @@ export async function process(job: IConversionJob, context: IUploadBundleStepCon
         const total = upload.getTotalSize(true);
 
         // Please note that the Azure SDK updates the SpeedSummary object (here `upload`) only when
-        // it finishes to upload a bloc (by default, a bloc has a size of 4M, configurable).
-        // Moreover, a blob is cut down into blocs only if the total blob size exceed 32M (configurable).
+        // it finishes to upload a block (by default, a block has a size of 4M, configurable).
+        // Moreover, a blob is cut down into blocks only if the total blob size exceed 32M (configurable).
         // So, if your final asset bundle is less than 32M, upload progress will stay at 0%.
         progressInterval = setInterval(async () => await job.progress({
             type: 'upload-bundle',
