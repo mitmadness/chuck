@@ -41,6 +41,7 @@
     "bull": "^2.2.6",
     "cors": "^2.8.3",
     "dotenv": "^4.0.0",
+    "dotenv-extended": "^2.0.0",
     "express": "^4.15.2",
     "express-basic-auth": "^1.0.2",
     "mongoose": "^4.9.6",

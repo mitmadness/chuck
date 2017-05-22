@@ -1,4 +1,4 @@
-declare module 'dodqsdotenv-extended' {
+declare module 'dotenv-extended' {
     import { parse as dotenvParse } from 'dotenv';
 
     namespace DotenvExtended {
