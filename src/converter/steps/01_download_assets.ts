@@ -7,6 +7,7 @@ import { IConversionJob } from '../job';
 import { IStepDescription, IStepsContext } from './step';
 
 export interface IDownloadAssetsStepsContext extends IStepsContext {
+    assetsPaths: string[];
     downloadedAssetsDir: string;
     downloadedAssetsPaths: string[];
 }

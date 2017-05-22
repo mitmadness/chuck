@@ -1,6 +1,9 @@
 import logger from '../logger';
 import { safeErrorSerialize } from '../safe_error_serialize';
-import { IConversionJob, IOrchestratorEvent, IProgressReportJob, updateConversion } from './job';
+import {
+    IConversionEndedEvent, IConversionEvent, IConversionJob, IProgressReportJob,
+    isProcessorStepChangeEvent, updateConversion
+} from './job';
 
 // GLOBAL QUEUE EVENTS
 //--------------------
@@ -29,14 +32,14 @@ export function onQueueCleaned(jobs: IConversionJob[]): void {
 // JOB-RELATED QUEUE EVENTS
 //-------------------------
 
-export async function onJobProgress(job: IProgressReportJob, progress: IOrchestratorEvent): Promise<void> {
+export async function onJobProgress(job: IProgressReportJob, progress: IConversionEvent): Promise<void> {
     logger.verbose(`convqueue: job #${job.id} [${progress.type}] ${progress.message}`);
 
     let updateQuery = {
         $push: { 'conversion.logs': progress }
     };
 
-    progress.type == 'orchestrator' && (updateQuery = {
+    isProcessorStepChangeEvent(progress) && (updateQuery = {
         ...updateQuery,
         $set: { 'conversion.step': progress.step.code }
     });
@@ -48,13 +51,20 @@ export async function onJobActive(job: IConversionJob): Promise<void> {
     logger.verbose(`convqueue: job #${job.jobId} has started`, job.data);
 }
 
-export async function onJobCompleted(job: IConversionJob): Promise<void> {
+export async function onJobCompleted(job: IConversionJob, assetBundleUrl: string): Promise<void> {
     logger.verbose(`convqueue: job #${job.jobId} is completed`, job.data);
+
+    await job.progress<IConversionEndedEvent>({
+        type: 'conversion-ended',
+        message: 'Conversion terminated with success!',
+        assetBundleUrl
+    });
 
     await updateConversion(job, {
         $set: {
             'conversion.isCompleted': true,
-            'conversion.step': null
+            'conversion.step': null,
+            'conversion.assetBundleUrl': assetBundleUrl
         }
     });
 }
@@ -62,11 +72,19 @@ export async function onJobCompleted(job: IConversionJob): Promise<void> {
 export async function onJobFailed(job: IConversionJob, error: any): Promise<void> {
     logger.error(`convqueue: job #${job.jobId} has failed!`, error);
 
+    const progressTask = job.progress({
+        type: 'end-conversion',
+        message: 'Conversion failed, an error occured',
+        error
+    });
+
     // we don't update conversion.step to let the client know where the fail occured
-    await updateConversion(job, {
+    const updateTask = updateConversion(job, {
         $set: {
             'conversion.isCompleted': true,
             'conversion.error': safeErrorSerialize(error)
         }
     });
+
+    await Promise.all([progressTask, updateTask]);
 }

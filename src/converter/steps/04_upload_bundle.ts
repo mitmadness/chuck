@@ -5,10 +5,6 @@ import { IConversionJob } from '../job';
 import { IStepDescription } from './step';
 import { IExecAssetBundleCompilerStepContext } from './03_exec_assetbundlecompiler';
 
-export interface IUploadBundleStepContext extends IExecAssetBundleCompilerStepContext {
-    assetBundleUrl: string;
-}
-
 export function describe(): IStepDescription {
     return {
         code: 'upload-bundle',
@@ -17,11 +13,11 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context: IUploadBundleStepContext): boolean {
-    return !!(context.assetBundlePath);
+export function shouldProcess(): boolean {
+    return true;
 }
 
-export async function process(job: IConversionJob, context: IUploadBundleStepContext): Promise<void> {
+export async function process(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): Promise<void> {
     await job.progress({ type: 'exec-assetbundlecompiler', message: `Upload "${context.assetBundlePath}" to Azure` });
 
     const blobService = getBlobService(job);

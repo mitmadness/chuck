@@ -26,6 +26,7 @@ export interface IConversion {
         isCompleted: boolean;
         step: string|null;
         error: any|null;
+        assetBundleUrl: string|null;
         logs: IConversionEvent[]
     };
 }
@@ -71,8 +72,9 @@ const ConversionSchema = new Schema({
         isCompleted: { type: Boolean, default: false },
         step: { type: String, default: null },
         error: { type: Schema.Types.Mixed, default: null },
+        assetBundleUrl: { type: String, default: null },
         logs: [
-            { type: Schema.Types.Mixed }
+            { type: Schema.Types.Mixed, default: [] }
         ]
     }
 }, { minimize: false });

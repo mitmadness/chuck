@@ -5,9 +5,10 @@ import * as pify from 'pify';
 import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
 import { IConversionJob } from '../job';
-import { IStepDescription, IStepsContext } from './step';
+import { IStepDescription } from './step';
+import { IDownloadAssetsStepsContext } from './01_download_assets';
 
-export interface IExecAssetBundleCompilerStepContext extends IStepsContext {
+export interface IExecAssetBundleCompilerStepContext extends IDownloadAssetsStepsContext {
     assetBundleDir: string;
     assetBundlePath: string;
 }

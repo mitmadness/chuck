@@ -4,9 +4,10 @@ import * as path from 'path';
 import * as pify from 'pify';
 import * as child_process from 'child_process';
 import { IConversionJob } from '../job';
-import { IStepDescription, IStepsContext } from './step';
+import { IStepDescription } from './step';
+import { IDownloadAssetsStepsContext } from './01_download_assets';
 
-export interface IExecIfcStepsContext extends IStepsContext {
+export interface IExecIfcStepsContext extends IDownloadAssetsStepsContext {
     convertedAssetsDir: string;
     convertedAssetsPaths: string[];
 }

@@ -9,9 +9,29 @@ export interface IConversionEvent {
     message: string;
 }
 
-export interface IOrchestratorEvent extends IConversionEvent {
-    type: 'orchestrator';
+export interface IProcessorStepChangeEvent extends IConversionEvent {
+    type: 'processor/step-change';
     step: IStepDescription;
+}
+
+export function isProcessorStepChangeEvent(event: IConversionEvent): event is IProcessorStepChangeEvent {
+    return event.type === 'processor/step-change';
+}
+
+export interface IProcessorCleanupErrorEvent extends IConversionEvent {
+    type: 'processor/cleanup-error';
+    step: IStepDescription;
+    error: any;
+}
+
+export interface IConversionEndedEvent extends IConversionEvent {
+    type: 'conversion-ended';
+    error?: any;
+    assetBundleUrl?: string;
+}
+
+export function isConversionEndedEvent(event: IConversionEvent): event is IConversionEndedEvent {
+    return event.type === 'conversion-ended';
 }
 
 /**

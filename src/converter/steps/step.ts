@@ -2,7 +2,7 @@ import { IConversionJob } from '../job';
 
 export interface IStepsContext {
     [customKey: string]: any;
-    assetsPaths: string[];
+    assetBundleUrl?: string; // mandatory ouput
 }
 
 export interface IStepDescription {
