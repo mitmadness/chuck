@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 import { IBuildOptionsMap } from '@mitm/assetbundlecompiler';
 import * as uuid from 'uuid';
-import { IConversionEvent } from '../converter/job';
+import { IEvent } from '../converter/job_events';
 
 export interface IConversion {
     code: string;
@@ -27,7 +27,7 @@ export interface IConversion {
         step: string|null;
         error: any|null;
         assetBundleUrl: string|null;
-        logs: IConversionEvent[]
+        logs: IEvent[]
     };
 }
 

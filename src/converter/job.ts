@@ -2,37 +2,7 @@ import { DocumentQuery } from 'mongoose';
 import { Job } from 'bull';
 import { Conversion, IConversion } from '../models';
 import { IConversionModel } from '../models/conversion';
-import { IStepDescription } from './steps/step';
-
-export interface IConversionEvent {
-    type: string;
-    message: string;
-}
-
-export interface IProcessorStepChangeEvent extends IConversionEvent {
-    type: 'processor/step-change';
-    step: IStepDescription;
-}
-
-export function isProcessorStepChangeEvent(event: IConversionEvent): event is IProcessorStepChangeEvent {
-    return event.type === 'processor/step-change';
-}
-
-export interface IProcessorCleanupErrorEvent extends IConversionEvent {
-    type: 'processor/cleanup-error';
-    step: IStepDescription;
-    error: any;
-}
-
-export interface IConversionEndedEvent extends IConversionEvent {
-    type: 'conversion-ended';
-    error?: any;
-    assetBundleUrl?: string;
-}
-
-export function isConversionEndedEvent(event: IConversionEvent): event is IConversionEndedEvent {
-    return event.type === 'conversion-ended';
-}
+import { IEvent } from './job_events';
 
 /**
  * This interface is the common subset of a normal Job object (w/ methods) and a job in a progress report.
@@ -47,7 +17,7 @@ export interface IConversionDataJob {
  */
 export interface IConversionJob extends Job {
     data: IConversion;
-    progress<T extends IConversionEvent>(event: T): Promise<void>;
+    progress<T extends IEvent>(event: T): Promise<void>;
 }
 
 /**

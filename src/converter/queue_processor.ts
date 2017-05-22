@@ -1,5 +1,6 @@
-import { IConversionJob, IProcessorCleanupErrorEvent, IProcessorStepChangeEvent } from './job';
+import { IConversionJob } from './job';
 import { IStepModule, IStepsContext } from './steps/step';
+import { processorCleanupErrorEvent, processorStepChangeEvent } from "./job_events";
 
 /**
  * The processor is the function that is passed to queue.process().
@@ -20,11 +21,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         const stepInfo = step.describe();
 
         //=> Signal progress
-        await job.progress<IProcessorStepChangeEvent>({
-            type: 'processor/step-change',
-            message: `Starting "${stepInfo.name}"`,
-            step: stepInfo
-        });
+        await job.progress(processorStepChangeEvent(`Starting "${stepInfo.name}"`, stepInfo));
 
         //=> Execute the step
         try {
@@ -55,11 +52,10 @@ export async function stepsCleanupProcessor(
     //=> Signal cleanup
     const stepNames = stepsStack.map(step => step.describe().code).join(', ');
 
-    await job.progress<IProcessorStepChangeEvent>({
-        type: 'processor/step-change',
-        message: `Performing cleanup for steps: ${stepNames} (${reason})`,
-        step: { code: 'cleanup', name: 'Conversion artifacts cleanup', priority: Infinity }
-    });
+    await job.progress(processorStepChangeEvent(
+        `Performing cleanup for steps: ${stepNames} (${reason})`,
+        { code: 'cleanup', name: 'Conversion artifacts cleanup', priority: Infinity }
+    ));
 
     //=> Call each step's cleanup() function
     while (stepsStack.length) {
@@ -71,11 +67,10 @@ export async function stepsCleanupProcessor(
         } catch (error) {
             const stepInfo = step.describe();
 
-            await job.progress<IProcessorCleanupErrorEvent>({
-                type: 'processor/cleanup-error',
-                message: `Error during calling cleanup() of step ${stepInfo.code}, ignoring`,
-                step: stepInfo, error
-            });
+            await job.progress(processorCleanupErrorEvent(
+                `Error during calling cleanup() of step ${stepInfo.code}, ignoring`,
+                stepInfo, error
+            ));
         }
     }
 }

@@ -3,7 +3,8 @@ import { sse, ISSECapableResponse } from '@toverux/expresse';
 import { safeErrorSerialize } from '../safe_error_serialize';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import converterQueue from '../converter/queue';
-import { IConversionEvent, IProgressReportJob, isConversionEndedEvent } from '../converter/job';
+import { IProgressReportJob } from '../converter/job';
+import { IEvent, isQueueConversionEndedEvent } from '../converter/job_events';
 import { wrapAsync, safeOutData } from '../express_utils';
 import { GoneError, NotFoundError } from './http_errors';
 import { hasValidApiKey } from './middlewares';
@@ -57,11 +58,11 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
     //=> Listen queue for progress events, filter, and send if the jobId matches
     emitterQueue.on('progress', handleProgress);
 
-    function handleProgress(job: IProgressReportJob, progress: IConversionEvent): void {
+    function handleProgress(job: IProgressReportJob, progress: IEvent): void {
         if (job.id != conversion.conversion.jobId) return;
         res.sse(progress.type, progress);
 
-        if (isConversionEndedEvent(progress)) {
+        if (isQueueConversionEndedEvent(progress)) {
             emitterQueue.removeListener('progress', handleProgress);
         }
     }
