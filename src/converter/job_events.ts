@@ -70,3 +70,19 @@ export function processorCleanupErrorEvent(
 export function isProcessorCleanupErrorEvent(event: IEvent): event is IProcessorCleanupErrorEvent {
     return event.type == 'processor/cleanup-error';
 }
+
+// ProcessorStepProgressEvent
+// --------------------------
+
+export interface IProcessorStepProgressEvent extends IEvent {
+    [customKey: string]: any;
+}
+
+export function processorStepProgressEvent(
+    stepCode: string,
+    type: string,
+    message: string,
+    data?: any
+): IProcessorStepProgressEvent {
+    return { type: `processor/${stepCode}/${type}`, message, ...data };
+}

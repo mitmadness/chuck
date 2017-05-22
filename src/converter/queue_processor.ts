@@ -1,6 +1,6 @@
 import { IConversionJob } from './job';
 import { IStepModule, IStepsContext } from './steps/step';
-import { processorCleanupErrorEvent, processorStepChangeEvent } from "./job_events";
+import { processorCleanupErrorEvent, processorStepChangeEvent, processorStepProgressEvent } from './job_events';
 
 /**
  * The processor is the function that is passed to queue.process().
@@ -15,7 +15,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
     //=> Execute all steps in order, sequentially
     for (const step of steps) {
         //=> Pass or record passage
-        if (!step.shouldProcess(job, context)) continue;
+        if (!step.shouldProcess(job.data, context)) continue;
         stepsStack.push(step);
 
         const stepInfo = step.describe();
@@ -23,9 +23,14 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
         //=> Signal progress
         await job.progress(processorStepChangeEvent(`Starting "${stepInfo.name}"`, stepInfo));
 
+        //=> Function for a step to signal its progress
+        function stepSignalProgress(type: string, message: string, data: any = {}) {
+            return job.progress(processorStepProgressEvent(stepInfo.code, type, message, data));
+        }
+
         //=> Execute the step
         try {
-            await step.process(job, context);
+            await step.process(job.data, context, stepSignalProgress);
         } catch (err) {
             await cleanup(`An error occured while running step ${stepInfo.code}`);
             throw err;

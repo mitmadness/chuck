@@ -69,7 +69,7 @@ export async function onJobFailed(job: IConversionJob, error: any): Promise<void
     logger.error(`convqueue: job #${job.jobId} has failed!`, error);
 
     const progressTask = job.progress(queueConversionEndedEvent(
-        'Conversion failed, an error occured with success!', null, error
+        'Conversion failed, an error occured!', null, error
     ));
 
     // we don't update conversion.step to let the client know where the fail occured

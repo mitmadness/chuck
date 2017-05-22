@@ -4,8 +4,8 @@ import * as path from 'path';
 import * as pify from 'pify';
 import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
-import { IConversionJob } from '../job';
-import { IStepDescription } from './step';
+import { IConversion } from '../../models';
+import { IStepDescription, ProgressFn } from './step';
 import { IDownloadAssetsStepsContext } from './01_download_assets';
 
 export interface IExecAssetBundleCompilerStepContext extends IDownloadAssetsStepsContext {
@@ -21,13 +21,17 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): boolean {
+export function shouldProcess(conv: IConversion, context: IExecAssetBundleCompilerStepContext): boolean {
     return !!(context.assetsPaths && context.assetsPaths.length);
 }
 
-export async function process(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): Promise<void> {
+export async function process(
+    conv: IConversion,
+    context: IExecAssetBundleCompilerStepContext,
+    progress: ProgressFn
+): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
-    const assetBundlePath = path.join(tmpDir, job.data.assetBundleName);
+    const assetBundlePath = path.join(tmpDir, conv.assetBundleName);
 
     await pify(fs.mkdir)(tmpDir);
 
@@ -38,13 +42,13 @@ export async function process(job: IConversionJob, context: IExecAssetBundleComp
         setUnityPath(config.unityPath);
     }
 
-    const options = job.data.compilerOptions;
+    const options = conv.compilerOptions;
 
     await bundle(...context.assetsPaths)
         .targeting(options.targeting)
         .includingEditorScripts(...options.editorScripts)
         .withBuildOptions(options.buildOptions)
-        .withLogger(async (log) => await job.progress({ type: 'exec-assetbundlecompiler', message: log }) )
+        .withLogger(async log => await progress('abcompiler-log', log))
         .to(assetBundlePath);
 }
 

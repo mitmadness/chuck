@@ -3,8 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
 import * as child_process from 'child_process';
-import { IConversionJob } from '../job';
-import { IStepDescription } from './step';
+import { IConversion } from '../../models';
+import { IStepDescription, ProgressFn } from './step';
 import { IDownloadAssetsStepsContext } from './01_download_assets';
 
 export interface IExecIfcStepsContext extends IDownloadAssetsStepsContext {
@@ -20,13 +20,13 @@ export function describe(): IStepDescription {
     };
 }
 
-export function shouldProcess(job: IConversionJob, context: IExecIfcStepsContext) {
+export function shouldProcess(conv: IConversion, context: IExecIfcStepsContext) {
     return context.assetsPaths &&
         context.assetsPaths.length &&
         context.assetsPaths.some(assetPath => assetPath.toLowerCase().endsWith('.ifc'));
 }
 
-export async function process(job: IConversionJob, context: IExecIfcStepsContext): Promise<void> {
+export async function process(conv: IConversion, context: IExecIfcStepsContext, progress: ProgressFn): Promise<void> {
     //=> Create a temporary folder for the assets
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-ifcopenshell-${Date.now()}`);
     await pify(fs.mkdir)(tmpDir);
@@ -36,7 +36,7 @@ export async function process(job: IConversionJob, context: IExecIfcStepsContext
 
     const conversions = context.assetsPaths.map(async (assetPath, index) => {
         if (assetPath.toLowerCase().endsWith('.ifc')) {
-            await job.progress({ type: 'exec-ifcopenshell', message: `Converting "${assetPath}" from IFC to Collada` });
+            await progress('convert-start', `Converting "${assetPath}" from IFC to Collada`);
             await convertAndStoreAssets(context, assetPath, index);
         }
     });

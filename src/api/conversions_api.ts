@@ -49,7 +49,9 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
 
     //=> Replay mode: dump all progress records
     if (isReplay && conversion.conversion.logs) {
-        conversion.conversion.logs.forEach(progress => res.sse(progress.type, progress));
+        conversion.conversion.logs.forEach((progress) => {
+            res.sse(progress.type, eventPayload(progress));
+        });
     }
 
     //=> @todo Unsafe typecast -- a Bull queue is an EventEmitter, but typings are not complete
@@ -58,14 +60,21 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
     //=> Listen queue for progress events, filter, and send if the jobId matches
     emitterQueue.on('progress', handleProgress);
 
-    function handleProgress(job: IProgressReportJob, progress: IEvent): void {
+    function handleProgress(job: IProgressReportJob, event: IEvent): void {
         if (job.id != conversion.conversion.jobId) return;
-        res.sse(progress.type, progress);
+        res.sse(event.type, eventPayload(event));
 
-        if (isQueueConversionEndedEvent(progress)) {
+        if (isQueueConversionEndedEvent(event)) {
             emitterQueue.removeListener('progress', handleProgress);
         }
     }
 }));
+
+function eventPayload(event: IEvent): Partial<IEvent> {
+    const eventPayload = { ...event };
+    delete eventPayload.type;
+
+    return eventPayload;
+}
 
 export default router;

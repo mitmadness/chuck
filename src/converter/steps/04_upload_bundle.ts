@@ -1,9 +1,9 @@
 import * as azure from 'azure-storage';
-import { setInterval } from 'timers';
+import * as pify from 'pify';
 import config from '../../config';
-import { IConversionJob } from '../job';
-import { IStepDescription } from './step';
-import { IExecAssetBundleCompilerStepContext } from './03_exec_assetbundlecompiler';
+import { IConversion } from '../../models';
+import { IStepDescription, ProgressFn } from './step';
+import { IExecAssetBundleCompilerStepContext as ICompilerStepContext } from './03_exec_assetbundlecompiler';
 
 export function describe(): IStepDescription {
     return {
@@ -17,61 +17,29 @@ export function shouldProcess(): boolean {
     return true;
 }
 
-export async function process(job: IConversionJob, context: IExecAssetBundleCompilerStepContext): Promise<void> {
-    await job.progress({ type: 'exec-assetbundlecompiler', message: `Upload "${context.assetBundlePath}" to Azure` });
+export async function process(conv: IConversion, context: ICompilerStepContext, progress: ProgressFn): Promise<void> {
+    await progress('upload-start', `Uploading "${context.assetBundlePath}" to Azure`);
 
-    const blobService = getBlobService(job);
+    const blobService = getBlobService(conv);
 
-    const blobName = job.data.assetBundleName;
-    const container = job.data.azure.container;
+    const blobName = conv.assetBundleName;
+    const container = conv.azure.container;
 
-    return new Promise<void>((resolve, reject) => {
-        let progressInterval: NodeJS.Timer;
+    const createBlob = pify(blobService.createBlockBlobFromLocalFile.bind(blobService));
+    const blobResult = await createBlob(container, blobName, context.assetBundlePath);
 
-        const upload = blobService.createBlockBlobFromLocalFile(
-            container, blobName, context.assetBundlePath,
-            async (err, blobResult) => {
-                clearInterval(progressInterval);
+    const blobUrl = blobService.getUrl(container, blobName);
 
-                if (err) return reject(err);
+    await progress('upload-end', 'Upload terminated with success', { blobUrl, blobResult });
 
-                const url = blobService.getUrl(container, blobName);
-
-                await job.progress({
-                    type: 'upload-bundle',
-                    message: `Upload ended with success`,
-                    blobUrl: url, blobResult
-                });
-
-                context.assetBundleUrl = url;
-                resolve();
-            }
-        );
-
-        const total = upload.getTotalSize(true);
-
-        // Please note that the Azure SDK updates the SpeedSummary object (here `upload`) only when
-        // it finishes to upload a block (by default, a block has a size of 4M, configurable).
-        // Moreover, a blob is cut down into blocks only if the total blob size exceed 32M (configurable).
-        // So, if your final asset bundle is less than 32M, upload progress will stay at 0%.
-        progressInterval = setInterval(async () => await job.progress({
-            type: 'upload-bundle',
-            message: `Upload progress: ${upload.getCompletePercent(0)} (${upload.getCompleteSize(true)}/${total})`,
-            uploadStats: {
-                totalSize: upload.totalSize,
-                completeSize: upload.completeSize,
-                completePercent: upload.getCompletePercent(2),
-                averageSpeed: upload.getAverageSpeed(false)
-            }
-        }), 1000);
-    });
+    context.assetBundleUrl = blobUrl;
 }
 
-function getBlobService(job: IConversionJob): azure.BlobService {
+function getBlobService(conv: IConversion): azure.BlobService {
     if (config.azure.enableEmu) {
         const devStoreCreds = azure.generateDevelopmentStorageCredentials();
         return azure.createBlobService(devStoreCreds);
     } else {
-        return azure.createBlobServiceWithSas(job.data.azure.host, job.data.azure.sharedAccessSignatureToken);
+        return azure.createBlobServiceWithSas(conv.azure.host, conv.azure.sharedAccessSignatureToken);
     }
 }

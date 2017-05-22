@@ -1,4 +1,6 @@
-import { IConversionJob } from '../job';
+import { IConversion } from '../../models';
+
+export type ProgressFn = (type: string, message: string, data?: any) => Promise<void>;
 
 export interface IStepsContext {
     [customKey: string]: any;
@@ -13,7 +15,7 @@ export interface IStepDescription {
 
 export interface IStepModule {
     describe(): IStepDescription;
-    shouldProcess(job: IConversionJob, context: IStepsContext): boolean;
-    process(job: IConversionJob, context: IStepsContext): Promise<void>;
+    shouldProcess(conversion: IConversion, context: IStepsContext): boolean;
+    process(conversion: IConversion, context: IStepsContext, progress: ProgressFn): Promise<void>;
     cleanup?(context: Readonly<IStepsContext>): Promise<void>;
 }
