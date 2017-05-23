@@ -35,7 +35,7 @@ const config: IChuckConfig = {
         user: process.env.CHUCK_ADMINWEBUIS_USER,
         password: process.env.CHUCK_ADMINWEBUIS_PASSWORD
     },
-    unityPath: process.env.CHUCK_UNITY_EDITOR_PATH,
+    unityPath: process.env.CHUCK_UNITYPATH,
     azure: {
         enableEmu: process.env.CHUCK_AZURE_ENABLEEMU === 'true'
     }
