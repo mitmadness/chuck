@@ -2,7 +2,7 @@
 
 # chuck ![license](https://img.shields.io/github/license/mitmadness/chuck.svg?style=flat-square)
 
-chuck is a webservice that converts files that Unity understands to Unity3D AssetBundles. We've also added [IFC](https://en.wikipedia.org/wiki/Industry_Foundation_Classes) support in the pipeline thanks to [IfcOpenShell](http://ifcopenshell.org/).
+chuck is a webservice that converts files that Unity understands to Unity3D AssetBundles.
 
 From the Unity3D [documentation](https://docs.unity3d.com/Manual/AssetBundlesIntro.html):
 

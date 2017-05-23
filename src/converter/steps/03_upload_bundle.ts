@@ -3,7 +3,7 @@ import * as pify from 'pify';
 import config from '../../config';
 import { IConversion } from '../../models';
 import { IStepDescription, ProgressFn } from './step';
-import { IExecAssetBundleCompilerStepContext as ICompilerStepContext } from './03_exec_assetbundlecompiler';
+import { IExecAssetBundleCompilerStepContext as ICompilerStepContext } from './02_exec_assetbundlecompiler';
 
 export function describe(): IStepDescription {
     return {

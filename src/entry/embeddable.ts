@@ -6,7 +6,7 @@ export { ProgressFn, IStepDescription, IStepsContext, IStepModule } from '../con
 
 //=> Export core steps' context for reuse in plugin steps
 export { IDownloadAssetsStepsContext } from '../converter/steps/01_download_assets';
-export { IExecAssetBundleCompilerStepContext } from '../converter/steps/03_exec_assetbundlecompiler';
+export { IExecAssetBundleCompilerStepContext } from '../converter/steps/02_exec_assetbundlecompiler';
 
 /**
  * Main entry function for embedded version of chuck.
