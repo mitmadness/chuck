@@ -1,13 +1,28 @@
 import defaultConfig, { EnvType, IChuckConfig } from '../config';
 
-export { IConversionJob } from '../converter/job';
-export { IStepModule, IStepDescription, IStepsContext } from '../converter/steps/step';
-export { IDownloadAssetsStepsContext } from '../converter/steps/01_download_assets';
+//=> Export core symbols for writing plugin steps
+export { IConversion } from '../models/conversion';
+export { ProgressFn, IStepDescription, IStepsContext, IStepModule } from '../converter/steps/step';
 
+//=> Export core steps' context for reuse in plugin steps
+export { IDownloadAssetsStepsContext } from '../converter/steps/01_download_assets';
+export { IExecAssetBundleCompilerStepContext } from '../converter/steps/03_exec_assetbundlecompiler';
+
+/**
+ * Main entry function for embedded version of chuck.
+ * Returns a fluent class for configuring then booting chuck.
+ *
+ * @param rawConfig Chuck's configuration
+ * @returns {FluentChuckMaker}
+ */
 export default function chuck(rawConfig?: Partial<IChuckConfig>): FluentChuckMaker {
     return new FluentChuckMaker(rawConfig);
 }
 
+/**
+ * Fluent API to create a chuck instance.
+ * Do NOT construct it directly with new FluentChuckMaker(). Use chuck() instead.
+ */
 export class FluentChuckMaker {
     private readonly config: Partial<IChuckConfig>;
 
@@ -39,12 +54,15 @@ export class FluentChuckMaker {
         return this;
     }
 
-    public enableToureiro(user: string, password: string): this {
+    public enableAdminWebUis(user: string, password: string): this {
         this.config.adminWebUis = { enable: true, user, password };
 
         return this;
     }
 
+    /**
+     * Starts the chuck server.
+     */
     public boot(): void {
         Object.assign(defaultConfig, this.config);
 
