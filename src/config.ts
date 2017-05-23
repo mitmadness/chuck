@@ -4,13 +4,64 @@ import * as path from 'path';
 export type EnvType = 'development'|'production';
 
 export interface IChuckConfig {
+    /**
+     * aka NODE_ENV. Configures the mode (`development` or `production`) in which the server is running.
+     *  - development: permissive CORS rules are set on the API
+     *  - production: timestamps in log messages and more verbose HTTP logs
+     *
+     * @default process.env.NODE_ENV || 'development'
+     */
     env: EnvType;
+
+    /**
+     * Minimum log level (npm standard log levels are used).
+     *
+     * @see https://github.com/winstonjs/winston#logging-levels
+     * @default 'verbose'
+     */
     logLevel: string;
+
+    /**
+     * Chuck HTTP server port.
+     *
+     * @default 3001
+     */
     serverPort: number;
+
+    /**
+     * Connection string to a MongoDB database.
+     *
+     * @default 'mongodb://localhost/chuck'
+     */
     mongoUrl: string;
+
+    /**
+     * Redis connection informations.
+     *
+     * @default { host: 'localhost', port: 6379, db: 0 }
+     */
     redis: { host: string; port: number; db: number };
+
+    /**
+     * Admin Web UIs configuration. Used by the admin interface and Toureiro.
+     *
+     * @default { enable: false, user: 'admin', password: 'admin' }
+     */
     adminWebUis: { enable: boolean, user: string; password: string; };
+
+    /**
+     * Unity Editor path (if not installed in the standard path).
+     *
+     * @see https://github.com/mitmadness/AssetBundleCompiler#changing-unitys-executable-path
+     * @default undefined (auto)
+     */
     unityPath: string|undefined;
+
+    /**
+     * Azure configuration.
+     *
+     * @default { enableEmu: false }
+     */
     azure: { enableEmu: boolean; };
 }
 
