@@ -8,6 +8,8 @@ From the Unity3D [documentation](https://docs.unity3d.com/Manual/AssetBundlesInt
 
 > AssetBundles are files which you can export from Unity to contain Assets of your choice, [that] can be loaded on demand by your application. This allows you to stream content, such as models, Textures, audio clips, or even entire Scenes [...].
 
+Chuck notably features REST & Server-Sent APIs, a command-line interface, an admin page for managing API keys, and integrates [Toureiro](https://github.com/Epharmix/Toureiro) for viewing queued jobs.
+
 ----------------
 
  - [Requirements](#requirements)
@@ -33,19 +35,14 @@ From the Unity3D [documentation](https://docs.unity3d.com/Manual/AssetBundlesInt
 
 ## Installation
 
-Chuck can be installed in two ways, either:
-
- - **"Standalone" mode**: use this to deploy chuck directly without integrating it to another application (except API communication of course)
- - **"Embedded mode"** (recommended): use this when deploying chuck inside/aside of your own application, or any other reason (including philosophical ones) that would necessitate using chuck as an npm package rather than a raw Git clone.
-
 Please note that chuck is not a pure library, nor a reusable Express middleware. It's a standalone application with its own logging, database, etc. But it can be installed via an npm package and exposes a public JavaScript API as well, for writing plugins or configuring and boot it.
 
-<details>
-<summary>Documentation for the standalone mode</summary>
+Chuck can be installed in two ways, either:
 
 ### Standalone installation
 
-As explained above, use this when using chuck as a standalone app. This is the simple method.
+<details>
+<summary>Classical approach. Use this to deploy chuck directly without integrating it to another application (except API communication of course)</summary>
 
 #### 1. Install the application and dependencies
 
@@ -70,10 +67,9 @@ You can also, of course, set environment variables by hand with your preferred m
 Run `yarn start`. That's it.
 </details>
 
+### Embedded installation (recommended)
 <details>
-<summary>Documentation for the embedded mode</summary>
-
-### Embedded installation
+<summary>Use this when deploying chuck inside/aside of your own application, or any other reason (including philosophical ones) that would necessitate using chuck as an npm package rather than a raw Git clone.</summary>
 
 @todo
 </details>
@@ -86,10 +82,12 @@ Run `yarn start`. That's it.
 
 Chuck exposes a simple REST and [SSE (Server-Sent Events)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) API for converting files to asset bundles.
 
-<details>
-<summary>POST /api/conversions (create a new conversion request and push to queue)</summary>
+### Create a new conversion request
 
-This endpoint will create a conversion request. It will immediately push on the conversions queue, so the job will start as soon as possible (conversions are ran sequentially).
+`POST /api/conversions`
+
+<details>
+<summary>This endpoint will create a conversion request. It will immediately push on the conversions queue, so the job will start as soon as possible (conversions are ran sequentially).</summary>
 
 #### Request
 
@@ -156,10 +154,12 @@ Content-Type: application/json; charset=utf-8
 ```
 </details>
 
-<details>
-<summary>GET /api/conversions/:code (retrieves a conversion request)</summary>
+### Retrieve a conversion request
 
-Retrieves a previously-posted conversion request. This endpoint has no authentication as the conversion code adds a first layer of security (moreover, conversion requests are not editable).
+`GET /api/conversions/{{code}}`
+
+<details>
+<summary>Retrieves a previously-posted conversion request. This endpoint has no authentication as the conversion code adds a first layer of security (moreover, conversion requests are not editable).</summary>
 
 #### Request
 
@@ -235,10 +235,12 @@ Content-Type: application/json; charset=utf-8
 ```
 </details>
 
-<details>
-<summary>GET /api/conversions/:code/events (realtime conversion job events)</summary>
+### Real-time conversion job's events
 
-This is the only way to know precisely when a conversion is completed (or failed). It also sends various events concerning the job state, which step is running, and various logging informations.
+`GET /api/conversions/{{code}}/events`
+
+<details>
+<summary>This is the only way to know precisely when a conversion is completed (or failed). It also sends various events concerning the job state, which step is running, and various logging informations.</summary>
 
 **This is an Server-Sent Events (SSE) endpoint**, use the browser's native interface `EventSource` to access it, or a browser/node.js polyfill like the [eventsource](https://www.npmjs.com/package/eventsource) package on npm.
 
