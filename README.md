@@ -397,10 +397,10 @@ data: {"message":"Conversion terminated with success!","assetBundleUrl":"https:/
 
 Chuck provides a CLI tool that is exported as the `bin` file in the package. In standalone mode, use it with `yarn cli -- --arguments`.
 
- - **`chuck help`** get available commands
- - **`chuck help <command>`** displays informations about a command and available arguments
- - **`chuck api:generate-key`** generates an API key. Pass `--save` to save the generated key to the database.
- - **`chuck api:revoke-key <key>`** revokes an API key stored in the database.
+ - **`chuck-cli help`** get available commands
+ - **`chuck-cli help <command>`** displays informations about a command and available arguments
+ - **`chuck-cli api:generate-key`** generates an API key. Pass `--save` to save the generated key to the database.
+ - **`chuck-cli api:revoke-key <key>`** revokes an API key stored in the database.
 
 ### Admin Web Interface
 

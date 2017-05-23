@@ -7,6 +7,9 @@
   "license": "MIT",
   "main": "dist/entry/embeddable.js",
   "types": "dist/entry/embeddable.d.ts",
+  "bin": {
+    "chuck-cli": "dist/entry/cli.js"
+  },
   "scripts": {
     "start": "nodemon dist/entry/standalone.js",
     "watch": "tsc -w",
