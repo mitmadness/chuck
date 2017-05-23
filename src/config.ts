@@ -9,7 +9,7 @@ export interface IChuckConfig {
     serverPort: number;
     mongoUrl: string;
     redis: { host: string; port: number; db: number };
-    toureiro: { enable: boolean, user: string; password: string; };
+    adminWebUis: { enable: boolean, user: string; password: string; };
     unityPath: string|undefined;
     azure: { enableEmu: boolean; };
 }
@@ -30,10 +30,10 @@ const config: IChuckConfig = {
         port: parseInt(process.env.CHUCK_REDIS_PORT, 10),
         db: parseInt(process.env.CHUCK_REDIS_DB, 10)
     },
-    toureiro: {
-        enable: process.env.CHUCK_TOUREIRO_ENABLE === 'true',
-        user: process.env.CHUCK_TOUREIRO_USER,
-        password: process.env.CHUCK_TOUREIRO_PASSWORD
+    adminWebUis: {
+        enable: process.env.CHUCK_ADMINWEBUIS_ENABLE === 'true',
+        user: process.env.CHUCK_ADMINWEBUIS_USER,
+        password: process.env.CHUCK_ADMINWEBUIS_PASSWORD
     },
     unityPath: process.env.CHUCK_UNITY_EDITOR_PATH,
     azure: {

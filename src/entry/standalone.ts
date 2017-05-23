@@ -1,16 +1,13 @@
 import * as os from 'os';
 import * as express from 'express';
 import * as cors from 'cors';
-import * as basicAuth from 'express-basic-auth';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
-import * as toureiro from 'toureiro';
 import './bootstrap';
 import config from '../config';
 import logger, { morganStreamWriter } from '../logger';
 import { connectDatabase } from '../mongoose';
 import api from '../api';
-import admin from '../admin';
 import converterQueue from '../converter/queue';
 
 //=> Resume the conversions queue
@@ -51,24 +48,14 @@ app.use(
     bodyParser.urlencoded({ extended: true })
 );
 
-const auth = basicAuth({
-        challenge: true,
-        users: { [config.toureiro.user]: config.toureiro.password }
-    });
-
-//=> Mount Toureiro
-if (config.toureiro.enable) {
-    const toureiroConf = toureiro({
-        redis: { host: config.redis.host, port: config.redis.port, db: 0 }
-    });
-
-    app.use('/toureiro', auth, toureiroConf);
-}
 //=> Mount the API
 app.use('/api', api);
 
-//=> Route of the admin interface
-app.use('/admin', auth, admin);
+if (config.adminWebUis.enable) {
+    // Load web uis on-demand with require()
+    // tslint:disable-next-line:no-var-requires
+    app.use(require('../web-uis').default);
+}
 
 //=> Start the HTTP server
 app.listen(port, () => {

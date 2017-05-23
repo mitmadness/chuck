@@ -1,12 +1,13 @@
 html
   head
-    title= 'Admin Chuck'
+    title= 'Chuck Webservice Admin'
+
   body
     form(action='' method='post')
       input(type='submit' name='generateKey' value='Generate a new API key')
     table
-      caption List of API Keys 
-      
+      caption List of API Keys
+
       each val in keys
         tr
           th= val.key

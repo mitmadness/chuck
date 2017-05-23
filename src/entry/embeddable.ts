@@ -40,7 +40,7 @@ export class FluentChuckMaker {
     }
 
     public enableToureiro(user: string, password: string): this {
-        this.config.toureiro = { enable: true, user, password };
+        this.config.adminWebUis = { enable: true, user, password };
 
         return this;
     }
