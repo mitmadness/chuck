@@ -13,10 +13,10 @@ Chuck notably features REST & Server-Sent APIs, a command-line interface, an adm
 ----------------
 
  - [Requirements](#requirements)
- - [Installation](#installation)
+ - [Installation](#installation): [Standalone](#standalone-installation) / [Embedded](#embedded-installation)
  - [Configuration](#configuration)
- - [Public REST API](#public-rest-api)
- - [Command Line Interface (CLI)](#command-line-interface)
+ - [Public REST API](#public-rest--sse-api)
+ - Extra tools: [Command Line Interface](#command-line-interface) / [Admin Web Interface](#admin-web-interface) / [Toureiro](#toureiro)
  - [Development & Contributing](#development--contributing)
 
 ----------------
@@ -67,9 +67,9 @@ You can also, of course, set environment variables by hand with your preferred m
 Run `yarn start`. That's it.
 </details>
 
-### Embedded installation (recommended)
+### Embedded installation
 <details>
-<summary>Use this when deploying chuck inside/aside of your own application, or any other reason (including philosophical ones) that would necessitate using chuck as an npm package rather than a raw Git clone.</summary>
+<summary>Somewhat recommended. Use this when deploying chuck inside/aside of your own application, or any other reason (including philosophical ones) that would necessitate using chuck as an npm package rather than a raw Git clone.</summary>
 
 @todo
 </details>
@@ -90,6 +90,8 @@ Chuck exposes a simple REST and [SSE (Server-Sent Events)](https://developer.moz
 <summary>This endpoint will create a conversion request. It will immediately push on the conversions queue, so the job will start as soon as possible (conversions are ran sequentially).</summary>
 
 #### Request
+
+:closed_lock_with_key: This endpoint requires authentication using an API key. You can generate one either via the CLI, or via the web interface. Pass the API key like this: `Authorization: Bearer YOUR_API_KEY`.
 
 Note: `compilerOptions` is an object of options to pass to AssetBundleCompiler ([abcompiler's reference](https://github.com/mitmadness/AssetBundleCompiler#link-simple-fluent-api)).
 
@@ -324,9 +326,32 @@ data: {"message":"Conversion terminated with success!","assetBundleUrl":"https:/
 ```
 </details>
 
-## Command Line Interface
+## Extras tools
 
-@todo
+### Command Line Interface
+
+Chuck provides a CLI tool that is exported as the `bin` file in the package. In standalone mode, use it with `yarn cli -- --arguments`.
+
+ - **`chuck help`** get available commands
+ - **`chuck help <command>`** displays informations about a command and available arguments
+ - **`chuck api:generate-key`** generates an API key. Pass `--save` to save the generated key to the database.
+ - **`chuck api:revoke-key <key>`** revokes an API key stored in the database.
+
+### Admin Web Interface
+
+A very, very simple administration interface is available under https://chuck/admin and uses HTTP Basic authentication, with the same credentials as Toureiro (see [Configuration](#configuration) section).
+
+It lets you create and revoke API keys as an alternative to the CLI.
+
+### Toureiro
+
+Chuck embarks [Toureiro](https://github.com/Epharmix/Toureiro), which is...
+
+> A graphical monitoring interface for the distributed job queue bull built using express and react. Toureiro provides simple monitoring features as well as the ability to promote delayed jobs directly.
+
+Toureiro's interface is protected by the same HTTP Basic Auth and credentials used to login to the administration interface (see [Configuration](#configuration) section).
+
+![Toureiro Web Interface](https://raw.githubusercontent.com/Epharmix/Toureiro/screenshots/public/screenshots/Job%20List.png)
 
 ## Development & Contributing
 
