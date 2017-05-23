@@ -76,7 +76,72 @@ Run `yarn start`. That's it.
 
 ## Configuration
 
+### Available configuration keys
+
+<details>
+<summary><strong>This is the interface for the available configuration</strong> (we'll see in the next sections how to configure it).</summary>
+
+```ts
+interface IChuckConfig {
+    // aka NODE_ENV. Configures the mode (`development` or `production`) in which the server is running.
+    // development: permissive CORS rules are set on the API
+    // production: timestamps in log messages and more verbose HTTP logs
+    // Defaults to process.env.NODE_ENV or, if undefined, "development"
+    env: EnvType;
+    
+    // Minimum log level (npm log levels, see https://github.com/winstonjs/winston#logging-levels).
+    // Defaults to "verbose"
+    logLevel: string;
+    
+    // Server HTTP port.
+    // Defaults to 3001
+    serverPort: number;
+    
+    // Connection string to a MongoDB database.
+    // Defaults to mongodb://localhost/chuck
+    mongoUrl: string;
+    
+    // Redis connection informations.
+    // Defaults to { host: 'localhost', port: 6379, db: 0 }
+    redis: { host: string; port: number; db: number };
+    
+    // Admin Web UIs configuration. Used by the admin interface and Toureiro.
+    // Default to { enable: false, user: 'admin', password: 'admin' }
+    adminWebUis: { enable: boolean, user: string; password: string; };
+    
+    // Unity Editor path (if not installed in the standard path), see https://github.com/mitmadness/AssetBundleCompiler#changing-unitys-executable-path
+    // Default to undefined (auto)
+    unityPath: string;
+    
+    // Azure configuration.
+    // Default to { enableEmu: false }
+    azure: { enableEmu: boolean; };
+}
+```
+</details>
+
+### Using environment variables
+
+<details>
+<summary>Chuck is primarily configurable via environment variables.</summary>
+
+You can set environement variables in the way you prefer. Tou can set them inline, in the CLI command that launches chuck, via `export`, or for example, if you use the standalone installation, via an `.env` file at root that overrides Chuck's `.env.defaults` values (only for redefined keys).
+
+Then, environment variables are simply mapped to the real configuration. Take those example:
+
+ - To set `config.logLevel`, set `CHUCK_LOGLEVEL`
+ - To set `config.adminWebUis.enable`, set `CHUCK_ADMINWEBUIS_ENABLE`.
+ 
+Etc. Prefix with `CHUCK_` and replace dots with underscores, all uppercase.
+</details>
+
+### Configuring in embedded mode
+
+<details>
+<summary>When using the embedded version, you can either use environment variable, or use a fluent API that configures a Chuck instance.</summary>
+
 @todo
+</details>
 
 ## Public REST / SSE API
 
