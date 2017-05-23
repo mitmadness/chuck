@@ -349,7 +349,7 @@ Chuck embarks [Toureiro](https://github.com/Epharmix/Toureiro), which is...
 
 > A graphical monitoring interface for the distributed job queue bull built using express and react. Toureiro provides simple monitoring features as well as the ability to promote delayed jobs directly.
 
-Toureiro's interface is protected by the same HTTP Basic Auth and credentials used to login to the administration interface (see [Configuration](#configuration) section).
+Toureiro's interface can be found on https://chuck/toureiro, and is protected by the same HTTP Basic Auth and credentials used to login to the administration interface (see [Configuration](#configuration) section).
 
 ![Toureiro Web Interface](https://raw.githubusercontent.com/Epharmix/Toureiro/screenshots/public/screenshots/Job%20List.png)
 
