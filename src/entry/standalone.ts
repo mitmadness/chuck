@@ -54,7 +54,7 @@ app.use('/api', api);
 if (config.adminWebUis.enable) {
     // Load web uis on-demand with require()
     // tslint:disable-next-line:no-var-requires
-    app.use(require('../web-uis').default);
+    app.use(require('../web_uis').default);
 }
 
 //=> Start the HTTP server
