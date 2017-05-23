@@ -16,7 +16,8 @@
     "build": "yarn lint && tsc",
     "cli": "node dist/entry/cli.js",
     "standalone": "node dist/entry/standalone.js",
-    "lint": "tslint src/**/*.ts stubs/**/*.ts"
+    "lint": "tslint src/**/*.ts stubs/**/*.ts",
+    "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -34,7 +35,8 @@
     "@types/yargs": "^6.6.0",
     "nodemon": "^1.11.0",
     "tslint": "^5.1.0",
-    "typescript": "^2.2.2"
+    "typescript": "^2.2.2",
+    "semantic-release": "^6.3.6"
   },
   "dependencies": {
     "@mitm/assetbundlecompiler": "^1.2.1",
