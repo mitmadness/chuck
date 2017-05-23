@@ -1,6 +1,6 @@
 <img src="https://github.com/mitmadness/chuck/raw/master/chuck.png" alt="chuck webservice logo" align="right">
 
-# chuck ![license](https://img.shields.io/github/license/mitmadness/chuck.svg?style=flat-square)
+# chuck [![npm version](https://img.shields.io/npm/v/@mitm/chuck.svg?style=flat-square)](https://www.npmjs.com/package/@mitm/chuck) ![license](https://img.shields.io/github/license/mitmadness/chuck.svg?style=flat-square) [![Travis Build](https://img.shields.io/travis/mitmadness/chuck.svg?style=flat-square)](https://travis-ci.org/mitmadness/chuck)
 
 chuck is a webservice that converts files that Unity understands to Unity3D AssetBundles.
 
