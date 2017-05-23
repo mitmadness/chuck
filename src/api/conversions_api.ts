@@ -38,20 +38,19 @@ router.get('/:code', wrapAsync(async (req, res, next) => {
 
 router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableResponse) => {
     const isReplay = req.query.replay !== 'false';
+    const sse = sseSend.bind(null, req.query.sseType);
 
     //=> Find the conversion
     const conversion = await Conversion.findOne({ code: req.params.code });
     if (!conversion) {
-        return res.sse('error', safeErrorSerialize(new NotFoundError()));
+        return sse(res, { type: 'error', ...safeErrorSerialize(new NotFoundError()) });
     } else if (!isReplay && conversion.conversion.isCompleted) {
-        return res.sse('error', safeErrorSerialize(new GoneError('This conversion is terminated')));
+        return sse(res, { type: 'error', ...safeErrorSerialize(new GoneError('This conversion is terminated')) });
     }
 
     //=> Replay mode: dump all progress records
     if (isReplay && conversion.conversion.logs) {
-        conversion.conversion.logs.forEach((progress) => {
-            res.sse(progress.type, eventPayload(progress));
-        });
+        conversion.conversion.logs.forEach(progress => sse(res, progress));
     }
 
     //=> @todo Unsafe typecast -- a Bull queue is an EventEmitter, but typings are not complete
@@ -62,7 +61,7 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
 
     function handleProgress(job: IProgressReportJob, event: IEvent): void {
         if (job.id != conversion.conversion.jobId) return;
-        res.sse(event.type, eventPayload(event));
+        sse(res, event);
 
         if (isQueueConversionEndedEvent(event)) {
             emitterQueue.removeListener('progress', handleProgress);
@@ -70,11 +69,15 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
     }
 }));
 
-function eventPayload(event: IEvent): Partial<IEvent> {
-    const eventPayload = { ...event };
-    delete eventPayload.type;
+function sseSend(type: 'events'|'data', res: ISSECapableResponse, event: IEvent): void {
+    if (type == 'data') {
+        res.sse(null, event);
+    } else {
+        const eventPayload = { ...event };
+        delete eventPayload.type;
 
-    return eventPayload;
+        res.sse(event.type, eventPayload);
+    }
 }
 
 export default router;
