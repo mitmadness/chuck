@@ -10,6 +10,10 @@ From the Unity3D [documentation](https://docs.unity3d.com/Manual/AssetBundlesInt
 
 Chuck notably features REST & Server-Sent APIs, a command-line interface, an admin page for managing API keys, and integrates [Toureiro](https://github.com/Epharmix/Toureiro) for viewing queued jobs.
 
+*:point_right: See also: [@mitm/assetbundlecompiler](https://github.com/mitmadness/AssetBundleCompiler), fluent JavaScript API to create AssetBundles from any files.*
+
+*:point_right: See also: [@mitm/unityinvoker](https://github.com/mitmadness/UnityInvoker), invoke Unity3D CLI with a fluent JavaScript API.*
+
 ----------------
 
  - [Requirements](#requirements)
