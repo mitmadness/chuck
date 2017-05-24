@@ -1,7 +1,9 @@
 import defaultConfig, { EnvType, IChuckConfig } from '../config';
+import * as pluginSteps from '../converter/plugin_steps';
+import { IStepModule } from '../converter/steps/step';
 
 //=> Export core symbols for writing plugin steps
-export { IConversion } from '../models/conversion';
+export { IConversion } from '../models/IConversion';
 export { ProgressFn, IStepDescription, IStepsContext, IStepModule } from '../converter/steps/step';
 
 //=> Export core steps' context for reuse in plugin steps
@@ -56,6 +58,12 @@ export class FluentChuckMaker {
 
     public enableAdminWebUis(user: string, password: string): this {
         this.config.adminWebUis = { enable: true, user, password };
+
+        return this;
+    }
+
+    public addSteps(...steps: IStepModule[]): this {
+        steps.forEach(pluginSteps.register);
 
         return this;
     }

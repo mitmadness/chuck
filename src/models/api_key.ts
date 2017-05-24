@@ -1,10 +1,9 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 import * as uuid from 'uuid';
+import { IApiKey } from './IApiKey';
 
-export interface IApiKey {
-    key: string;
-}
+export { IApiKey };
 
 export type IApiKeyModel = IApiKey & Document;
 

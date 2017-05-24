@@ -1,35 +1,9 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
-import { IBuildOptionsMap } from '@mitm/assetbundlecompiler';
 import * as uuid from 'uuid';
-import { IEvent } from '../converter/job_events';
+import { IConversion } from './IConversion';
 
-export interface IConversion {
-    code: string;
-    assetBundleName: string;
-    assetUrls: string[];
-
-    azure: {
-        host: string;
-        sharedAccessSignatureToken: string;
-        container: string;
-    };
-
-    compilerOptions: {
-        targeting: string;
-        buildOptions: IBuildOptionsMap;
-        editorScripts: string[];
-    };
-
-    conversion: {
-        jobId: string|null;
-        isCompleted: boolean;
-        step: string|null;
-        error: any|null;
-        assetBundleUrl: string|null;
-        logs: IEvent[]
-    };
-}
+export { IConversion };
 
 export type IConversionModel = IConversion & Document;
 
@@ -84,7 +58,7 @@ export function safeData({
     assetUrls,
     azure,
     compilerOptions
-}: IConversion) {
+}: IConversion): Partial<IConversion> {
     return { assetBundleName, assetUrls, azure, compilerOptions };
 }
 

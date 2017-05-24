@@ -1,2 +1,2 @@
-export { IApiKey, ApiKey } from './api_key';
-export { IConversion, Conversion } from './conversion';
+export { ApiKey, IApiKey } from './api_key';
+export { Conversion, IConversion } from './conversion';

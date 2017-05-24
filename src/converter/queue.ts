@@ -1,8 +1,12 @@
 import * as queue from 'bull';
 import config from '../config';
-import steps from './steps';
+import coreSteps from './steps';
+import * as pluginSteps from './plugin_steps';
 import { processor } from './queue_processor';
 import * as handlers from './queue_event_handlers';
+
+//=> Get plug-in steps and merge with the core steps
+const steps = coreSteps.concat(pluginSteps.all());
 
 //=> Sort all steps with their declared priority
 const sortedSteps = steps.sort((a, b) => a.describe().priority - b.describe().priority);
