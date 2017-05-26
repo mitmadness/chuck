@@ -75,6 +75,6 @@ export class FluentChuckMaker {
         Object.assign(defaultConfig, this.config);
 
         //=> Launch Chuck by its main entry point
-        require('./standalone');
+        require('./app_standalone');
     }
 }

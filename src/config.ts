@@ -63,6 +63,12 @@ export interface IChuckConfig {
      * @default { enableEmu: false }
      */
     azure: { enableEmu: boolean; };
+
+    /**
+     * An array of module names.
+     * Thos modules will be loaded dynamically as step plugins.
+     */
+    stepModulePlugins: string[];
 }
 
 //=> Load default environment variables with dotenv-extended
@@ -89,7 +95,8 @@ const config: IChuckConfig = {
     unityPath: process.env.CHUCK_UNITYPATH,
     azure: {
         enableEmu: process.env.CHUCK_AZURE_ENABLEEMU === 'true'
-    }
+    },
+    stepModulePlugins: process.env.CHUCK_STEPMODULEPLUGINS ? process.env.CHUCK_STEPMODULEPLUGINS.split(',') : []
 };
 
 export default config;
