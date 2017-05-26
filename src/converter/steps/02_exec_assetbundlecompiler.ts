@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as pify from 'pify';
 import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
-import { IConversion } from '../../models';
+import { IConversion } from '../../models/IConversion';
 import { IStepDescription, ProgressFn } from './step';
 import { IDownloadAssetsStepsContext } from './01_download_assets';
 

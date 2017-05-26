@@ -3,8 +3,6 @@ import { Document, Schema } from 'mongoose';
 import * as uuid from 'uuid';
 import { IApiKey } from './IApiKey';
 
-export { IApiKey };
-
 export type IApiKeyModel = IApiKey & Document;
 
 const ApiKeySchema = new Schema({

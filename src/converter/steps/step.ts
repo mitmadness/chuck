@@ -1,4 +1,4 @@
-import { IConversion } from '../../models';
+import { IConversion } from '../../models/IConversion';
 
 export type ProgressFn = (type: string, message: string, data?: any) => Promise<void>;
 

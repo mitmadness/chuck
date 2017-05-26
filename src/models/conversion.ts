@@ -3,8 +3,6 @@ import { Document, Schema } from 'mongoose';
 import * as uuid from 'uuid';
 import { IConversion } from './IConversion';
 
-export { IConversion };
-
 export type IConversionModel = IConversion & Document;
 
 const ConversionSchema = new Schema({

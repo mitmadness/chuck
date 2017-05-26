@@ -1,6 +1,7 @@
 import { DocumentQuery } from 'mongoose';
 import { Job } from 'bull';
-import { Conversion, IConversion } from '../models';
+import { Conversion } from '../models';
+import { IConversion } from '../models/IConversion';
 import { IConversionModel } from '../models/conversion';
 import { IEvent } from './job_events';
 

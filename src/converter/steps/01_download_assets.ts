@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
-import { IConversion } from '../../models';
+import { IConversion } from '../../models/IConversion';
 import { IStepDescription, IStepsContext, ProgressFn } from './step';
 
 export interface IDownloadAssetsStepsContext extends IStepsContext {
