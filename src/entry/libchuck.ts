@@ -12,7 +12,7 @@ export { IDownloadAssetsStepsContext } from '../converter/steps/01_download_asse
 export { IExecAssetBundleCompilerStepContext } from '../converter/steps/02_exec_assetbundlecompiler';
 
 export function boot(config: Partial<IChuckConfig> = {}): void {
-    Object.assign(defaultConfig, this.config);
+    Object.assign(defaultConfig, config);
 
     //=> Launch Chuck by its main entry point
     require('./standalone');
