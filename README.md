@@ -17,7 +17,7 @@ Chuck notably features REST & Server-Sent APIs, a command-line interface, an adm
 ----------------
 
  - [Requirements](#requirements)
- - [Installation](#installation): [Standalone](#standalone-installation) / [Embedded](#embedded-installation)
+ - [Installation](#installation): [Standalone](#standalone-installation) / [Embedded](#embedded-installation) 
  - [Configuration](#configuration)
  - [Public REST API](#public-rest--sse-api)
  - Extra tools: [Command Line Interface](#command-line-interface) / [Admin Web Interface](#admin-web-interface) / [Toureiro](#toureiro)
@@ -39,11 +39,9 @@ Chuck notably features REST & Server-Sent APIs, a command-line interface, an adm
 
 ## Installation
 
-Please note that chuck is not a pure library, nor a reusable Express middleware. It's a standalone application with its own logging, database, etc. But it can be installed via an npm package and exposes a public JavaScript API as well, for writing plugins or configuring and boot it.
+Please note that chuck is not a pure library, nor a reusable Express middleware. It's a standalone application with its own logging, database, etc. But it can also be installed as an npm package for writing plugins or configuring and boot it.
 
-Chuck can be installed in two ways, either:
-
-### Standalone installation
+### Standalone installation 
 
 <details>
 <summary>Classical approach. Use this to deploy chuck directly without integrating it to another application (except API communication of course)</summary>
@@ -66,16 +64,60 @@ You can now override values from `.env.defaults` to match your own environment w
 
 You can also, of course, set environment variables by hand with your preferred method (exports, inline variables when launching the command...).
 
+*:point_right: Read more about how configuration is mapped with environment variables in [Using environment variables](#using-environment-variables)*
+
 #### 3. Run it
 
 Run `yarn start`. That's it.
+
+To use chuck plugins, install them (ex. `yarn add @mitm/chuck-ifc`) then ask chuck to load them via the `CHUCK_STEPMODULEPLUGINS` environment variable:
+
+```
+CHUCK_STEPMODULEPLUGINS=@mitm/chuck-ifc,myplugin yarn start
+```
 </details>
 
-### Embedded installation
-<details>
-<summary>Somewhat recommended. Use this when deploying chuck inside/aside of your own application, or any other reason (including philosophical ones) that would necessitate using chuck as an npm package rather than a raw Git clone.</summary>
+### Embedded installation 
 
-@todo
+<details>
+<summary>Chuck app integration into another package: chuck as a npm package. This is the preferred method and it gives you more flexibility, doesn't need compilation, permits better versioning, etc.</summary>
+
+#### 1. Install chuck via its package
+
+```
+yarn add @mitm/chuck
+```
+
+#### 2. Configure & boot it
+
+You can either set up your own entry point and configure it in JavaScript (see [Configuration](#configuration)), or you can still use environment variables.
+
+**With environment variables**, do it like this:
+
+```
+CHUCK_SERVERPORT=80 CHUCK_MONGOURL=mongodb://localhost/chuck yarn chuck
+```
+
+You can also, of course, set environment variables by hand with your preferred method (exports, inline variables when launching the command...).
+
+Run the CLI similarly with `yarn chuck-cli`.
+
+*:point_right: Read more about how configuration is mapped with environment variables in [Using environment variables](#using-environment-variables)*
+
+**With your own entry point**:
+
+Create a file named, for example, `chuck.ts` in your project:
+
+```typescript
+import { boot } from '@mitm/chuck';
+
+boot({
+    serverPort: 80,
+    mongoUrl: 'mongodb://localhost/chuck'
+});
+```
+
+You can still use environment variables with `boot()`.
 </details>
 
 ## Configuration
@@ -83,7 +125,7 @@ Run `yarn start`. That's it.
 ### Available configuration keys
 
 <details>
-<summary><strong>This is the interface for the available configuration</strong> (we'll see in the next sections how to configure it).</summary>
+<summary>This is the interface for the available configuration</summary>
 
 ```ts
 interface IChuckConfig {
@@ -120,6 +162,12 @@ interface IChuckConfig {
     // Azure configuration.
     // Default to { enableEmu: false }
     azure: { enableEmu: boolean; };
+    
+    /**
+     * An array of module names.
+     * Those modules will be loaded dynamically as step plugins.
+     */
+    stepModulePlugins: string[];
 }
 ```
 </details>
@@ -127,9 +175,9 @@ interface IChuckConfig {
 ### Using environment variables
 
 <details>
-<summary>Chuck is primarily configurable via environment variables.</summary>
+<summary>Chuck is primarily configurable via environment variables. Read here how to map the configuration interface options on environment variables.</summary>
 
-You can set environement variables in the way you prefer. Tou can set them inline, in the CLI command that launches chuck, via `export`, or for example, if you use the standalone installation, via an `.env` file at root that overrides Chuck's `.env.defaults` values (only for redefined keys).
+You can set environement variables in the way you prefer. Tou can set them inline, in the CLI command that launches chuck, via a shell `export`, or for example, if you use the standalone installation, via an `.env` file at root that overrides Chuck's `.env.defaults` values (only for redefined keys).
 
 Then, environment variables are simply mapped to the real configuration. Take those example:
 
@@ -137,14 +185,6 @@ Then, environment variables are simply mapped to the real configuration. Take th
  - To set `config.adminWebUis.enable`, set `CHUCK_ADMINWEBUIS_ENABLE`.
  
 Etc. Prefix with `CHUCK_` and replace dots with underscores, all uppercase.
-</details>
-
-### Configuring in embedded mode
-
-<details>
-<summary>When using the embedded version, you can either use environment variable, or use a fluent API that configures a Chuck instance.</summary>
-
-@todo
 </details>
 
 ## Public REST / SSE API
@@ -401,10 +441,12 @@ data: {"message":"Conversion terminated with success!","assetBundleUrl":"https:/
 
 Chuck provides a CLI tool that is exported as the `bin` file in the package. In standalone mode, use it with `yarn cli -- --arguments`.
 
- - **`chuck-cli help`** get available commands
- - **`chuck-cli help <command>`** displays informations about a command and available arguments
- - **`chuck-cli api:generate-key`** generates an API key. Pass `--save` to save the generated key to the database.
- - **`chuck-cli api:revoke-key <key>`** revokes an API key stored in the database.
+Examples (using chuck as a package):
+
+ - **`yarn chuck-cli help`** get available commands
+ - **`yarn chuck-cli help <command>`** displays informations about a command and available arguments
+ - **`yarn chuck-cli api:generate-key`** generates an API key. Pass `--save` to save the generated key to the database.
+ - **`yarn chuck-cli api:revoke-key <key>`** revokes an API key stored in the database.
 
 ### Admin Web Interface
 

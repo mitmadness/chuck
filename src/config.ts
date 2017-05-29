@@ -66,7 +66,7 @@ export interface IChuckConfig {
 
     /**
      * An array of module names.
-     * Thos modules will be loaded dynamically as step plugins.
+     * Those modules will be loaded dynamically as step plugins.
      */
     stepModulePlugins: string[];
 }

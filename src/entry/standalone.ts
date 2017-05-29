@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import config from '../config';
 import logger from '../logger';
 import * as pluginSteps from '../converter/plugin_steps';
