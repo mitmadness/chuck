@@ -17,7 +17,7 @@ export function describe(): IStepDescription {
     return {
         code: 'exec-assetbundlecompiler',
         name: 'Execute AssetBundleCompiler to assemble the asset bundle',
-        priority: 30,
+        priority: 20
     };
 }
 

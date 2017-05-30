@@ -16,7 +16,7 @@ export function describe(): IStepDescription {
     return {
         code: 'download-assets',
         name: 'Download remote assets',
-        priority: 10,
+        priority: 10
     };
 }
 
@@ -24,7 +24,11 @@ export function shouldProcess(conv: IConversion): boolean {
     return true;
 }
 
-export async function process(conv: IConversion, context: IDownloadAssetsStepsContext, progress: ProgressFn): Promise<void> {
+export async function process(
+    conv: IConversion,
+    context: IDownloadAssetsStepsContext,
+    progress: ProgressFn
+): Promise<void> {
     //=> Create a temporary folder for the assets
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-dl-assets-${Date.now()}`);
     await pify(fs.mkdir)(tmpDir);

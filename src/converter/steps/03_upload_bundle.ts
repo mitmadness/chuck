@@ -9,7 +9,7 @@ export function describe(): IStepDescription {
     return {
         code: 'upload-bundle',
         name: 'Upload the AssetBundle on Azure',
-        priority: 40,
+        priority: 30
     };
 }
 
