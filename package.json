@@ -53,7 +53,7 @@
     "mongoose": "^4.9.6",
     "morgan": "^1.8.1",
     "node-fetch": "^1.6.3",
-    "pify": "^2.3.0",
+    "pify": "^3.0.0",
     "pug": "^2.0.0-rc.1",
     "source-map-support": "^0.4.15",
     "toureiro": "^0.2.13",
