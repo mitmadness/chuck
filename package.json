@@ -17,7 +17,7 @@
     "build": "yarn lint && tsc",
     "cli": "node dist/entry/cli.js",
     "standalone": "node dist/entry/standalone.js",
-    "lint": "tslint src/**/*.ts stubs/**/*.ts",
+    "lint": "tslint \"src/**/*.ts\" \"stubs/**/*.ts\"",
     "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post"
   },
   "devDependencies": {
