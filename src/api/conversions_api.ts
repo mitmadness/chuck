@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { sse, ISSECapableResponse } from '@toverux/expresse';
+import { sse, ISseResponse } from '@toverux/expresse';
 import { safeErrorSerialize } from '../safe_error_serialize';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import converterQueue from '../converter/queue';
@@ -36,7 +36,7 @@ router.get('/:code', wrapAsync(async (req, res, next) => {
     next();
 }));
 
-router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableResponse) => {
+router.get('/:code/events', sse(), wrapAsync(async (req, res: ISseResponse) => {
     const isReplay = req.query.replay !== 'false';
     const sse = sseSend.bind(null, req.query.sseType);
 
@@ -69,14 +69,14 @@ router.get('/:code/events', sse(), wrapAsync(async (req, res: ISSECapableRespons
     }
 }));
 
-function sseSend(type: 'events'|'data', res: ISSECapableResponse, event: IEvent): void {
+function sseSend(type: 'events'|'data', res: ISseResponse, event: IEvent): void {
     if (type == 'data') {
-        res.sse(null, event);
+        res.sse.data(event);
     } else {
         const eventPayload = { ...event };
         delete eventPayload.type;
 
-        res.sse(event.type, eventPayload);
+        res.sse.event(event.type, eventPayload);
     }
 }
 
