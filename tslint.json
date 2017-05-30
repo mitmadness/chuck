@@ -7,7 +7,7 @@
     "object-literal-sort-keys": false,
     "comment-format": [],
     "triple-equals": false,
-    "trailing-comma": false,
+    "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
     "arrow-parens": false,
     "new-parens": false,
     "no-unused-expression": false
