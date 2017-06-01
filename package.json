@@ -45,6 +45,7 @@
     "azure-storage": "^2.1.0",
     "body-parser": "^1.17.1",
     "bull": "^2.2.6",
+    "compose-middleware": "^2.2.0",
     "cors": "^2.8.3",
     "dotenv": "^4.0.0",
     "dotenv-extended": "^2.0.0",
