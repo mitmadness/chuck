@@ -366,12 +366,28 @@ Available query parameters:
  - `?sseType={events|data}`: whether to use data-only SSE messages or event+data. If using `data`, the event name will be in the `type` property of the data-only message. Defaults to `events`.
  - `?replay={true|false}`: whether to dump missed events between the job start and the connection to the SSE endpoint. Defaults to `true`.
 
+#### Unsuccessful response
+
+Two classic HTTP errors may occur before the SSE session starts (errors are formatted the same way there are on the rest of the API).
+
+ - `404 Not Found` when the conversion code given in the URL is unknown ;
+ - `410 Gone` when `?replay=false` and the conversion is already terminated (success or error).
+
+The client can handle this using `EventSource.onerror`.
+
 #### Successful response (completed conversion)
 
-:warning: **The SSE spec does not allow a server to close the connection is a clean way**. It's client's responsibility to close the connection (`EventSource#close()`) when it receives either:
+:bulb: Note: The server will close the connection as soon as the conversion is terminated, error or success. As the SSE spec does not allow a server to close the connection gracefully, the client MUST listen for errors, and call EventSource#close() itself to avoid automatic reconnection.
 
- - An `error` event: happens only if the conversion does not exist (check the code in the URL)
- - A `queue/conversion-ended` event that contains either an error or an URL to the resulting asset bundle.
+```typescript
+ev.onerror = (event) => {
+    if (event.eventPhase == EventSource.CLOSED) {
+        ev.close();
+    }
+};
+```
+
+:bulb: Note: The client will probably most interested in the `queue/conversion-ended` event that contains either an error or an URL to the resulting asset bundle.
 
 ```
 HTTP/1.1 200 OK
