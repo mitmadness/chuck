@@ -62,6 +62,10 @@
     "@types/express" "*"
     "@types/node" "*"
 
+"@types/boom@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@types/boom/-/boom-4.3.2.tgz#8f40fb142322958ff1bb520c2d8d20cf1dd3d468"
+
 "@types/bson@*":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.3.tgz#6c26f0876bf9d8cbb06edd4019e29354bf3a03e0"
@@ -459,6 +463,12 @@ boom@2.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-2.10.1.tgz#39c8918ceff5799f83f9492a848f625add0c766f"
   dependencies:
     hoek "2.x.x"
+
+boom@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/boom/-/boom-5.1.0.tgz#0308fa8e924cd6d42d9c3bf4883bdc98f0e71df8"
+  dependencies:
+    hoek "4.x.x"
 
 bootstrap@3.3.x:
   version "3.3.7"
@@ -1519,6 +1529,10 @@ highlight.js@8.8.x:
 hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
+
+hoek@4.x.x:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.1.1.tgz#9cc573ffba2b7b408fb5e9c2a13796be94cddce9"
 
 hooks-fixed@2.0.0:
   version "2.0.0"

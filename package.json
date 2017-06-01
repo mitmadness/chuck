@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
+    "@types/boom": "^4.3.2",
     "@types/bull": "^2.1.0",
     "@types/cors": "^2.8.1",
     "@types/dotenv": "^4.0.0",
@@ -44,6 +45,7 @@
     "@toverux/expresse": "^2.0.1",
     "azure-storage": "^2.1.0",
     "body-parser": "^1.17.1",
+    "boom": "^5.1.0",
     "bull": "^2.2.6",
     "compose-middleware": "^2.2.0",
     "cors": "^2.8.3",

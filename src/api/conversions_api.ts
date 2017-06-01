@@ -1,9 +1,9 @@
+import { notFound } from 'boom';
 import * as express from 'express';
 import { Conversion, safeData as safeConversionData } from '../models/conversion';
 import converterQueue from '../converter/queue';
 import { wrapAsync, safeOutData } from '../express_utils';
 import conversionsEventsMiddleware from './conversions_api_events';
-import { NotFoundError } from './http_errors';
 import { hasValidApiKey } from './middlewares';
 
 const router: express.Router = express.Router();
@@ -32,7 +32,7 @@ router.post('/', hasValidApiKey(), wrapAsync(async (req, res, next) => {
 router.get('/:code', wrapAsync(async (req, res, next) => {
     const conversion = await Conversion.findOne({ code: req.params.code }, { 'conversion.logs': false });
     if (!conversion) {
-        throw new NotFoundError();
+        throw notFound();
     }
 
     res.status(200).json(safeOutData(conversion));

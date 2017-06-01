@@ -1,4 +1,5 @@
 import { sse, ISseResponse } from '@toverux/expresse';
+import { notFound, resourceGone } from 'boom';
 import { compose } from 'compose-middleware';
 import { Request, Response, NextFunction } from 'express';
 import converterQueue from '../converter/queue';
@@ -6,7 +7,6 @@ import { IProgressReportJob } from '../converter/job';
 import { IEvent, isQueueConversionEndedEvent } from '../converter/job_events';
 import { Conversion, IConversionModel } from '../models/conversion';
 import { wrapAsync } from '../express_utils';
-import { GoneError, NotFoundError } from './http_errors';
 
 interface InitSseRequest extends Request {
     isReplay: boolean;
@@ -30,9 +30,9 @@ async function loadConversion(req: InitSseRequest, res: Response, next: NextFunc
 
     //=> Check that we can continue
     if (!req.conversion) {
-        throw new NotFoundError();
+        throw notFound();
     } else if (!req.isReplay && req.conversion.conversion.isCompleted) {
-        throw new GoneError('This conversion is terminated');
+        throw resourceGone('This conversion is terminated');
     }
 
     next();
