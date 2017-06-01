@@ -1,3 +1,4 @@
+import { safeErrorSerialize } from '../safe_error_serialize';
 import { IStepDescription } from './steps/step';
 
 export interface IEvent {
@@ -29,6 +30,10 @@ export function queueConversionEndedEvent(
     assetBundleUrl: string|null,
     error: any = null
 ): IQueueConversionEndedEvent {
+    if (error) {
+        error = safeErrorSerialize(error);
+    }
+
     return { type: 'queue/conversion-ended', message, assetBundleUrl, error };
 }
 
