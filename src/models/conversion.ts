@@ -18,6 +18,14 @@ const ConversionSchema = new Schema({
         }
     },
 
+    conversionOptions: {
+        type: Array,
+        required: true,
+        validate(options: any[]) {
+            return options.every(value => typeof value === 'string');
+        }
+    },
+
     azure: {
         host: { type: String, required: true },
         sharedAccessSignatureToken: { type: String, required: true },
@@ -54,10 +62,11 @@ const ConversionSchema = new Schema({
 export function safeData({
     assetBundleName,
     assetUrls,
+    conversionOptions,
     azure,
     compilerOptions
 }: IConversion): Partial<IConversion> {
-    return { assetBundleName, assetUrls, azure, compilerOptions };
+    return { assetBundleName, assetUrls, conversionOptions, azure, compilerOptions };
 }
 
 export const Conversion = mongoose.model<IConversionModel>('Conversion', ConversionSchema);

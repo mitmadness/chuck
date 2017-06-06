@@ -5,6 +5,7 @@ export interface IConversion {
     code: string;
     assetBundleName: string;
     assetUrls: string[];
+    conversionOptions: string[];
 
     azure: {
         host: string;
