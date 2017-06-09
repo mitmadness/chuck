@@ -7,7 +7,7 @@ const router: express.Router = express.Router();
 router.get('/', wrapAsync(async (req, res, next) => {
     const keys = await ApiKey.find({});
 
-    res.render('admin', { keys });
+    res.render('admin/admin', { keys });
 
     next();
 }));

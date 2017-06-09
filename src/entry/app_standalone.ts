@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
+import * as path from 'path';
 import * as morgan from 'morgan';
 import './bootstrap';
 import config from '../config';
@@ -22,7 +23,7 @@ const port = config.serverPort;
 
 //=> Load the view engine Pug
 app.set('view engine', 'pug');
-app.set('views', './src/admin');
+app.set('views', path.resolve(`${__dirname}/..`));
 
 //=> Connect to the MongoDB database
 connectDatabase(config.mongoUrl).catch((error) => {

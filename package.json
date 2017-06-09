@@ -13,12 +13,13 @@
   },
   "scripts": {
     "start": "nodemon dist/entry/standalone.js",
-    "watch": "tsc -w",
-    "build": "yarn lint && tsc",
+    "watch": "yarn copy-pug && tsc -w",
+    "build": "yarn lint && tsc && yarn copy-pug",
     "cli": "node dist/entry/cli.js",
     "standalone": "node dist/entry/standalone.js",
     "lint": "tslint \"src/**/*.ts\" \"stubs/**/*.ts\"",
-    "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post",
+    "copy-pug": "yarn copy src/admin/*.pug dist/admin/"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -48,6 +49,7 @@
     "boom": "^5.1.0",
     "bull": "^2.2.6",
     "compose-middleware": "^2.2.0",
+    "copy": "^0.3.0",
     "cors": "^2.8.3",
     "dotenv": "^4.0.0",
     "dotenv-extended": "^2.0.0",
