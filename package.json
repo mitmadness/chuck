@@ -19,7 +19,7 @@
     "standalone": "node dist/entry/standalone.js",
     "lint": "tslint \"src/**/*.ts\" \"stubs/**/*.ts\"",
     "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post",
-    "copy-pug": "yarn copy src/admin/*.pug dist/admin/"
+    "copy-pug": "yarn copy \"src/admin/*.pug\" \"dist/admin/\""
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
