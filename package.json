@@ -19,7 +19,7 @@
     "standalone": "node dist/entry/standalone.js",
     "lint": "tslint \"src/**/*.ts\" \"stubs/**/*.ts\"",
     "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post",
-    "copy-pug": "yarn copy \"src/admin/*.pug\" \"dist/admin/\""
+    "copy-pug": "cpy \"admin/*.pug\" \"../dist/\" --cwd=src --parents"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -49,8 +49,8 @@
     "boom": "^5.1.0",
     "bull": "^2.2.6",
     "compose-middleware": "^2.2.0",
-    "copy": "^0.3.0",
     "cors": "^2.8.3",
+    "cpy-cli": "^1.0.1",
     "dotenv": "^4.0.0",
     "dotenv-extended": "^2.0.0",
     "express": "^4.15.2",
