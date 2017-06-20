@@ -31,10 +31,8 @@ connectDatabase(config.mongoUrl).catch((error) => {
     process.exit(1);
 });
 
-//=> Enable CORS in dev mode so the front can reach the API
-if (config.env == 'development') {
-    app.use(cors());
-}
+//=> Enable CORS
+app.use(cors());
 
 //=> Logging of HTTP requests with morgan
 const morganFormat = config.env == 'production'
