@@ -49,9 +49,9 @@
     conventional-changelog "0.0.17"
     github-url-from-git "^1.4.0"
 
-"@toverux/expresse@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@toverux/expresse/-/expresse-2.0.1.tgz#5575321e604de02ecd633f7a5235ad64cd16a62a"
+"@toverux/expresse@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@toverux/expresse/-/expresse-2.1.0.tgz#e2728d69bac3b2302b32e87d96733dad4d6e3872"
   dependencies:
     compose-middleware "^2.2.0"
 
