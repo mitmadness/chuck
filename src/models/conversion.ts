@@ -20,7 +20,7 @@ const ConversionSchema = new Schema({
 
     conversionOptions: {
         type: Array,
-        required: true,
+        default: [],
         validate(options: any[]) {
             return options.every(value => typeof value === 'string');
         }
