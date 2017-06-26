@@ -5,6 +5,12 @@ export type EnvType = 'development'|'production';
 
 export interface IChuckConfig {
     /**
+     * The release number of chuck, as specified in the package.json.
+     * This will only have a real value in the npm distribution of chuck -- value is otherwise "0.0.0-development".
+     */
+    release: string;
+
+    /**
      * aka NODE_ENV. Configures the mode (`development` or `production`) in which the server is running.
      *  - development: permissive CORS rules are set on the API
      *  - production: timestamps in log messages and more verbose HTTP logs
@@ -34,6 +40,11 @@ export interface IChuckConfig {
      * @default 'mongodb://localhost/chuck'
      */
     mongoUrl: string;
+
+    /**
+     * DSN for Sentry error reporting.
+     */
+    ravenDsn: string;
 
     /**
      * Redis connection informations.
@@ -76,12 +87,18 @@ dotenvx.load({
     defaults: path.resolve(`${__dirname}/../.env.defaults`)
 });
 
+//=> Determine release number
+// tslint:disable-next-line:no-var-requires
+const release = require('../package.json').version;
+
 //=> Hydrate config with the environment variables
 const config: IChuckConfig = {
+    release,
     env: process.env.NODE_ENV || process.env.CHUCK_ENV,
     logLevel: process.env.CHUCK_LOGLEVEL,
     serverPort: parseInt(process.env.CHUCK_SERVERPORT, 10),
     mongoUrl: process.env.CHUCK_MONGOURL,
+    ravenDsn: process.env.CHUCK_RAVENDSN,
     redis: {
         host: process.env.CHUCK_REDIS_HOST,
         port: parseInt(process.env.CHUCK_REDIS_PORT, 10),
