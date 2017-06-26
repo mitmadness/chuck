@@ -1,3 +1,5 @@
+import * as raven from 'raven';
+import config from '../config';
 import logger from '../logger';
 import { safeErrorSerialize } from '../safe_error_serialize';
 import { IConversionJob, IProgressReportJob, updateConversion } from './job';
@@ -66,13 +68,20 @@ export async function onJobCompleted(job: IConversionJob, assetBundleUrl: string
 }
 
 export async function onJobFailed(job: IConversionJob, error: any): Promise<void> {
+    //=> Log & report on Sentry
     logger.error(`convqueue: job #${job.jobId} has failed!`, error);
 
+    if (config.ravenDsn) {
+        raven.captureException(error);
+    }
+
+    //=> Report in job's progress log
     const progressTask = job.progress(queueConversionEndedEvent(
         'Conversion failed, an error occured!', null, error
     ));
 
-    // we don't update conversion.step to let the client know where the fail occured
+    //=> Update the conversion document infos about progress.
+    //   We don't update conversion.step to let the client know where the fail occured.
     const updateTask = updateConversion(job, {
         $set: {
             'conversion.isCompleted': true,
