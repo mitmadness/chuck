@@ -35,7 +35,8 @@ Chuck notably features REST & Server-Sent APIs, a command-line interface, an adm
  - :warning: **An _activated_ installation of Unity on the machine** :warning:
    - If Unity is not installed in the standard path, configure the path via the [Configuration](#configuration)
    - You must activate Unity if not already done, even with a free plan, read [Unity activation](https://github.com/mitmadness/AssetBundleCompiler#unity-activation) from AssetBundleCompiler
- - An installation of **[IfcConvert (IfcOpenShell)](http://ifcopenshell.org/ifcconvert.html)** available as `IfcConvert` via the `PATH`, but only if you are converting IFC files.
+
+Also, except logging them, chuck can optionally report fatal errors on [Sentry](https://sentry.io/welcome/). To enable this, [configure](#configuration) your Sentry DSN.
 
 ## Installation
 
@@ -146,6 +147,10 @@ interface IChuckConfig {
     // Connection string to a MongoDB database.
     // Defaults to mongodb://localhost/chuck
     mongoUrl: string;
+    
+    // DSN for Sentry error reporting.
+    // Reporting is disabled if this is not set.
+    ravenDsn: string;
     
     // Redis connection informations.
     // Defaults to { host: 'localhost', port: 6379, db: 0 }
