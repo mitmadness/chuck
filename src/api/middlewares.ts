@@ -5,6 +5,10 @@ import { wrapAsync } from '../express_utils';
 import { safeErrorSerialize } from '../safe_error_serialize';
 import { isKeyValid } from './api_keys_cache';
 
+interface ISentryResponse extends Response {
+    sentry?: string;
+}
+
 export function hasValidApiKey(): Handler {
     return wrapAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const authHeader = req.header('Authorization');
@@ -22,7 +26,7 @@ export function hasValidApiKey(): Handler {
     });
 }
 
-export function errorHandler(): ErrorRequestHandler {
+export function recoverableErrorsHandler(): ErrorRequestHandler {
     return (err: any, req: Request, res: Response, next: NextFunction): void => {
         //=> Headers already sent, let Express handle the thing
         if (res.headersSent) {
@@ -43,10 +47,19 @@ export function errorHandler(): ErrorRequestHandler {
             });
         }
 
-        //=> In all other cases, return a 500 error
-        res.status(500).json(safeErrorSerialize(err));
+        //=> We can't recognize this error, pass to the next error handler.
+        next(err);
+    };
+}
 
-        //=> Log it because that's unexpected
+export function fatalErrorsHandler(): ErrorRequestHandler {
+    return (err: any, req: Request, res: ISentryResponse, next: NextFunction): void => {
+        //=> We don't know what this error is, return a 500 error
+        res.status(500).json(safeErrorSerialize(err, res.sentry));
+
+        //=> Log it because that's, well, unexpected
         logger.error(err);
+
+        next();
     };
 }
