@@ -43,7 +43,7 @@
     "typescript": "^2.2.2"
   },
   "dependencies": {
-    "@mitm/assetbundlecompiler": "^1.3.0",
+    "@mitm/assetbundlecompiler": "^1.4.0",
     "@toverux/expresse": "^2.1.0",
     "azure-storage": "^2.1.0",
     "body-parser": "^1.17.1",
