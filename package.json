@@ -45,6 +45,7 @@
   "dependencies": {
     "@mitm/assetbundlecompiler": "^1.4.0",
     "@toverux/expresse": "^2.1.0",
+    "@types/sanitize-filename": "^1.1.28",
     "azure-storage": "^2.1.0",
     "body-parser": "^1.17.1",
     "boom": "^5.1.0",
@@ -62,6 +63,7 @@
     "pify": "^3.0.0",
     "pug": "^2.0.0-rc.1",
     "raven": "^2.1.0",
+    "sanitize-filename": "^1.6.1",
     "source-map-support": "^0.4.15",
     "toureiro": "^0.2.13",
     "uuid": "^3.0.1",

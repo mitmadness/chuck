@@ -1,5 +1,6 @@
 import * as azure from 'azure-storage';
 import * as pify from 'pify';
+import * as sanitize from 'sanitize-filename';
 import config from '../../config';
 import { IConversion } from '../../models/IConversion';
 import { IStepDescription, ProgressFn } from './step';
@@ -22,7 +23,7 @@ export async function process(conv: IConversion, context: ICompilerStepContext, 
 
     const blobService = getBlobService(conv);
 
-    const blobName = conv.assetBundleName;
+    const blobName = sanitize(conv.assetBundleName);
     const container = conv.azure.container;
 
     const createBlob = pify(blobService.createBlockBlobFromLocalFile.bind(blobService));

@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as pify from 'pify';
+import * as sanitize from 'sanitize-filename';
 import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
 import { IConversion } from '../../models/IConversion';
@@ -31,7 +32,8 @@ export async function process(
     progress: ProgressFn
 ): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
-    const assetBundlePath = path.join(tmpDir, conv.assetBundleName);
+    const sanitizedBundleName = sanitize(conv.assetBundleName);
+    const assetBundlePath = path.join(tmpDir, sanitizedBundleName);
 
     await pify(fs.mkdir)(tmpDir);
 
