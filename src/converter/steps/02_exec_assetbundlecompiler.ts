@@ -32,7 +32,7 @@ export async function process(
     progress: ProgressFn
 ): Promise<void> {
     const tmpDir = path.resolve(`${os.tmpdir()}/chuck-exec-assetbundlecompiler-${Date.now()}`);
-    const sanitizedBundleName = sanitize(conv.assetBundleName);
+    const sanitizedBundleName = sanitize(conv.assetBundleName).trim().toLowerCase();
     const assetBundlePath = path.join(tmpDir, sanitizedBundleName);
 
     await pify(fs.mkdir)(tmpDir);

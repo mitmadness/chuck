@@ -23,7 +23,7 @@ export async function process(conv: IConversion, context: ICompilerStepContext, 
 
     const blobService = getBlobService(conv);
 
-    const blobName = sanitize(conv.assetBundleName);
+    const blobName = sanitize(conv.assetBundleName).trim().toLowerCase();
     const container = conv.azure.container;
 
     const createBlob = pify(blobService.createBlockBlobFromLocalFile.bind(blobService));
