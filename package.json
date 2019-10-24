@@ -19,7 +19,7 @@
     "standalone": "node dist/entry/standalone.js",
     "lint": "tslint \"src/**/*.ts\" \"stubs/**/*.ts\"",
     "semantic-release": "semantic-release pre && npm publish --access public && semantic-release post",
-    "test":"test/test.sh",
+    "test": "node test/test.js",
     "copy-pug": "cpy \"admin/*.pug\" \"../dist/\" --cwd=src --parents"
   },
   "devDependencies": {
