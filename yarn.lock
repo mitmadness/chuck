@@ -96,7 +96,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/express@*", "@types/express@>=4.0.0", "@types/express@^4.0.35":
+"@types/express@*", "@types/express@^4.0.35":
   version "4.0.35"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.0.35.tgz#6267c7b60a51fac473467b3c4a02cd1e441805fe"
   dependencies:
@@ -414,7 +414,13 @@ base62@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/base62/-/base62-1.2.0.tgz#31e7e560dc846c9f44c1a531df6514da35474157"
 
-basic-auth@^1.0.4, basic-auth@~1.1.0:
+basic-auth@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/basic-auth/-/basic-auth-2.0.1.tgz#b998279bf47ce38344b4f3cf916d4679bbf51e3a"
+  dependencies:
+    safe-buffer "5.1.2"
+
+basic-auth@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/basic-auth/-/basic-auth-1.1.0.tgz#45221ee429f7ee1e5035be3f51533f1cdfd29884"
 
@@ -1107,11 +1113,10 @@ expand-range@^1.8.1:
     fill-range "^2.1.0"
 
 express-basic-auth@^1.0.2:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/express-basic-auth/-/express-basic-auth-1.1.1.tgz#eee45fb1d2412c9d7c8310ff7625a65d93510661"
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/express-basic-auth/-/express-basic-auth-1.1.7.tgz#8682dea1023ec9694628f9ab561fb56d17e88741"
   dependencies:
-    "@types/express" ">=4.0.0"
-    basic-auth "^1.0.4"
+    basic-auth "^2.0.1"
 
 express@4.14.x:
   version "4.14.1"
@@ -3220,6 +3225,10 @@ run-auto@^2.0.0:
 run-series@^1.1.3:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/run-series/-/run-series-1.1.4.tgz#89a73ddc5e75c9ef8ab6320c0a1600d6a41179b9"
+
+safe-buffer@5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
 
 safe-buffer@^5.0.1:
   version "5.0.1"
