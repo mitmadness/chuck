@@ -6,9 +6,27 @@ import * as pify from 'pify';
 import { IConversion } from '../../models/IConversion';
 import { IStepDescription, IStepsContext, ProgressFn } from './step';
 
+// -- STEP 01 --
+// This step download all files in field assetUrls of the IConversion (from the body of the query POST /conversions)
+// The path to the local files are stored in assetsPaths of the context, which is forwarded to other steps (STEP 02 in
+// most cases)
+
 export interface IDownloadAssetsStepsContext extends IStepsContext {
+    /**
+     * Where are the assets to bundle? This is used in 02_exec_assetbundlecompile and other steps.
+     *
+     * This is different from downloadedAssetsPaths, which may contains interrupted downloads.
+     * Files in assetsPath are garranteed to be complete.
+     */
     assetsPaths: string[];
+
+    /**
+     * Where are the downloaded assets? This is used to clean afterwards.
+     */
     downloadedAssetsDir: string;
+    /**
+     * What are the downloaded assets? This is used to clean afterwards.
+     */
     downloadedAssetsPaths: string[];
 }
 

@@ -4,6 +4,9 @@ import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
 import { ApiKey } from '../../models';
 
+/**
+ * The API key is used to authenticate conversion requests, so revoking it forbid a client to do further conversions
+ */
 const command: CommandModule = {
     command: 'api:revoke-key <key>',
     describe: 'Revoke an API key',

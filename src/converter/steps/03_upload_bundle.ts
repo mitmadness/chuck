@@ -6,6 +6,11 @@ import { IConversion } from '../../models/IConversion';
 import { IStepDescription, ProgressFn } from './step';
 import { IExecAssetBundleCompilerStepContext as ICompilerStepContext } from './02_exec_assetbundlecompiler';
 
+// -- STEP 03 --
+// This step upload the file at assetBundlePath (in the context, transfered between steps) to Azure using the data
+// given by the user.
+// The resulting URL is stored in assetBundleUrl.
+
 export function describe(): IStepDescription {
     return {
         code: 'upload-bundle',

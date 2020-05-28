@@ -6,6 +6,10 @@ import config from './config';
 
 const router: express.Router = express.Router();
 
+// -- WEB UIs --
+// 1. Admin to add/remove authentication keys
+// 2. Toureiro to display jobs
+
 //=> Set a middleware that authenticate administrators
 const adminAuth = basicAuth({
     challenge: true,

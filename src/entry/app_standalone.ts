@@ -11,6 +11,10 @@ import { connectDatabase } from '../mongoose';
 import api from '../api';
 import converterQueue from '../converter/queue';
 
+// -- STANDALONE MODE (part 2) --
+// When using Chuck in standalone mode, we first load the required plugins (in part 1, ./standalone.ts)
+// The part 2 (current file) takes care of running the server and importing ./bootstrap to get error reporting
+
 //=> Resume the conversions queue
 converterQueue.resume().catch((error) => {
     logger.error(error.message);

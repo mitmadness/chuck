@@ -5,6 +5,9 @@ import { IConversion } from './IConversion';
 
 export type IConversionModel = IConversion & Document;
 
+/**
+ * More details on this in IConversion
+ */
 const ConversionSchema = new Schema({
     code: { type: String, unique: true, index: true, default: () => uuid.v4() },
 

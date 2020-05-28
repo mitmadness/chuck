@@ -1,6 +1,9 @@
 import { safeErrorSerialize } from '../safe_error_serialize';
 import { IStepDescription } from './steps/step';
 
+// -- Queue events (the models) --
+// This files contains the models for queue events
+
 export interface IEvent {
     type: string;
     message: string;

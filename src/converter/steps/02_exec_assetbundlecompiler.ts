@@ -9,8 +9,21 @@ import { IConversion } from '../../models/IConversion';
 import { IStepDescription, ProgressFn } from './step';
 import { IDownloadAssetsStepsContext } from './01_download_assets';
 
+// -- STEP 02 --
+// This step bundle all the files in the assetsPaths field of the context (the data blob transfered between steps)
+// and bundle it with Unity using the options given by the user.
+// The result is stored in assetBundlePath for upload by STEP 03.
+
 export interface IExecAssetBundleCompilerStepContext extends IDownloadAssetsStepsContext {
+    /**
+     * Where is the generated asset? This is used to clean afterwards.
+     */
     assetBundleDir: string;
+    /**
+     * What is the generated asset path? This is used:
+     *  - for the 03_upload_bundle
+     *  - to clean afterwards.
+     */
     assetBundlePath: string;
 }
 

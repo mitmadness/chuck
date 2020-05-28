@@ -5,6 +5,9 @@ import { IApiKey } from './IApiKey';
 
 export type IApiKeyModel = IApiKey & Document;
 
+/**
+ * More details on this in IApiKey
+ */
 const ApiKeySchema = new Schema({
     key: { type: String, unique: true, index: true, default: () => uuid.v4() }
 });

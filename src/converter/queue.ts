@@ -5,6 +5,12 @@ import * as pluginSteps from './plugin_steps';
 import { processor } from './queue_processor';
 import * as handlers from './queue_event_handlers';
 
+// -- Queue configuration --
+// This files bind the events, fetch all possible conversion steps, and start the queue.
+// If you search...
+//  - where a job is processed => ./src/converter/queue_processors.ts
+//  - where the actual conversion takes place => ./src/converter/steps/*
+
 //=> Get plug-in steps and merge with the core steps
 const steps = coreSteps.concat(pluginSteps.all());
 

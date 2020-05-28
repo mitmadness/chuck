@@ -2,6 +2,23 @@ import { IConversionJob } from './job';
 import { IStepModule, IStepsContext } from './steps/step';
 import { processorCleanupErrorEvent, processorStepChangeEvent, processorStepProgressEvent } from './job_events';
 
+// -- Job processor --
+// Bull (the tech behind the queue) is given a function to do the actual job when it is added to the queue.
+//
+// We split the job in two methods:
+//  1. processor: call the steps one at a time, to get the job done.
+//  2. stepsCleanupProcessor: remove the temporary files when the job is done.
+//
+// Since there is many possible conversion, the processor is not in charge of doing the conversion.
+// Instead, it delegates this task to the steps. A step is either built-in (listed in ./src/converter/steps/) or in
+// a plugin.
+//
+// For a typical conversion, we have at least 3 steps:
+//  1. One to get the file to convert
+//  2. One or more to do the conversion
+//  3. One to upload the result
+
+
 /**
  * The processor is the function that is passed to queue.process().
  * It iterates over conversion steps, handling context and errors (cleanup, etc).

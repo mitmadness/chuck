@@ -4,6 +4,9 @@ import logger from '../../logger';
 import { connectDatabase, disconnectFromDatabase } from '../../mongoose';
 import { ApiKey } from '../../models';
 
+/**
+ * The API key may then be used to authenticate conversion requests
+ */
 const command: CommandModule = {
     command: 'api:generate-key',
     describe: 'Generate an API key',

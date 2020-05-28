@@ -1,10 +1,26 @@
+/**
+ * The type of a clean error
+ */
 export interface IPlainObjectError {
     name: string;
     message: string;
+
+    /**
+     * Error id on Sentry
+     */
     errorId?: string;
+
+    /**
+     * Sub-errors
+     */
     errors?: any[];
 }
 
+/**
+ * This helper standardize and clean errors to get something readable to the user
+ * @param error Your regular error
+ * @param sentryErrorId When reported on the error server, this id is used to track it
+ */
 export function safeErrorSerialize(error: any, sentryErrorId?: string): IPlainObjectError {
     const plainError: any = {};
 

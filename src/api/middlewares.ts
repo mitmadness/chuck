@@ -9,6 +9,10 @@ interface ISentryResponse extends Response {
     sentry?: string;
 }
 
+/**
+ * This middleware checks if the key sent alongside the conversion request is valid
+ * Used like this: `router.post('/', hasValidApiKey(), yourMiddleware);`
+ */
 export function hasValidApiKey(): Handler {
     return wrapAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const authHeader = req.header('Authorization');
@@ -26,6 +30,10 @@ export function hasValidApiKey(): Handler {
     });
 }
 
+/**
+ * This middleware catch common errors like 404 and other 4XX errors (using boom helpers) and let other errors
+ * pass through (they are later processed by Sentry).
+ */
 export function recoverableErrorsHandler(): ErrorRequestHandler {
     return (err: any, req: Request, res: Response, next: NextFunction): void => {
         //=> Headers already sent, let Express handle the thing
@@ -52,6 +60,11 @@ export function recoverableErrorsHandler(): ErrorRequestHandler {
     };
 }
 
+/**
+ * When this is a server error, the recoverableErrorsHandler() let the error pass through. The Sentry middleware, which
+ * is located just after, send the message on the error reporting server.
+ * FatalErrorsHandler allows to display the result of the request to Sentry, and an error 500, to the user
+ */
 export function fatalErrorsHandler(): ErrorRequestHandler {
     return (err: any, req: Request, res: ISentryResponse, next: NextFunction): void => {
         //=> We don't know what this error is, return a 500 error

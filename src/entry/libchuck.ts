@@ -1,5 +1,10 @@
 import defaultConfig, { IChuckConfig } from '../config';
 
+// -- LIB MODE --
+// When using Chuck in lib mode, we don't start anything by default to avoid messing with the user error reporting
+// But we allow the lib user to start the server using boot(), which run the standalone mode.
+// The standalone mode will then import boostrap, adding the required error reporting.
+
 //=> Export IChuckConfig
 export { IChuckConfig, EnvType } from '../config';
 

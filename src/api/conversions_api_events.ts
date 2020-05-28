@@ -8,11 +8,25 @@ import { IEvent, isQueueConversionEndedEvent } from '../converter/job_events';
 import { Conversion, IConversionModel } from '../models/conversion';
 import { wrapAsync } from '../express_utils';
 
+/**
+ * The middleware below is a composition of several middlewares
+ * The first one extracts data from the request in this shape.
+ */
 interface InitSseRequest extends Request {
+    /**
+     * If the conversion is running or completed, do we want past events played again?
+     * Default to true, unless specified isReplay == 'false' in the query
+     */
     isReplay: boolean;
+    /**
+     * All the data stored on the conversion job
+     */
     conversion: IConversionModel;
 }
 
+/**
+ * This middleware output the events for a given conversion in realtime.
+ */
 export default compose(
     //=> 1. Loads the conversion, checks request validity
     wrapAsync(loadConversion),
@@ -24,6 +38,9 @@ export default compose(
     terminateSseSession
 );
 
+/**
+ * Extract the data in the user request, fetch the matching conversion then put the data at the root of the Request
+ */
 async function loadConversion(req: InitSseRequest, res: Response, next: NextFunction): Promise<void> {
     req.isReplay = req.query.replay !== 'false';
     req.conversion = await Conversion.findOne({ code: req.params.code });
@@ -38,6 +55,9 @@ async function loadConversion(req: InitSseRequest, res: Response, next: NextFunc
     next();
 }
 
+/**
+ * Once the SSE has been initialised, we can output SSE events, so we output the logs
+ */
 async function conversionSseEvents(req: InitSseRequest, res: ISseResponse, next: NextFunction): Promise<void> {
     // @todo Unsafe typecast -- a Bull queue is an EventEmitter, but typings are not complete
     const emitterQueue = (converterQueue as any) as NodeJS.EventEmitter;
@@ -65,11 +85,17 @@ async function conversionSseEvents(req: InitSseRequest, res: ISseResponse, next:
     }
 }
 
+/**
+ * Closing method called when the end of the stream of events is reached.
+ */
 function terminateSseSession(req: Request, res: Response, next: NextFunction): void {
     res.end(); // avoid hanging for nothing, would be too easy to DDoS it
     next();
 }
 
+/**
+ * Helper to send a realtime event
+ */
 function sseSend(type: 'events'|'data', res: ISseResponse, event: IEvent): void {
     if (type == 'data') {
         res.sse.data(event);

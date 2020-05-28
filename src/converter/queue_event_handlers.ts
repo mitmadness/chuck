@@ -5,6 +5,11 @@ import { safeErrorSerialize } from '../safe_error_serialize';
 import { IConversionJob, IProgressReportJob, updateConversion } from './job';
 import { IEvent, isProcessorStepChangeEvent, queueConversionEndedEvent, queueConversionStartEvent } from './job_events';
 
+// -- Queue events (the handlers) --
+// Bull (the tech behind the queue) provide several events to watch what happens to the jobs and to react to
+// pause/resume and errors.
+// This file contains all the callbacks to these events.
+
 // GLOBAL QUEUE EVENTS
 //--------------------
 
