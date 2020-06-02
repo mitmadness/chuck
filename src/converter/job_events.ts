@@ -94,3 +94,16 @@ export function processorStepProgressEvent(
 ): IProcessorStepProgressEvent {
     return { type: `processor/${stepCode}/${type}`, message, ...data };
 }
+
+// ProcessorOverallProgressEvent
+// --------------------------
+
+export interface IProcessorOverallProgressEvent extends IEvent {
+    [customKey: string]: any;
+}
+
+export function processorProgressEvent(
+    progress: number
+): IProcessorOverallProgressEvent {
+    return { type: `progress`, message: '', progress };
+}

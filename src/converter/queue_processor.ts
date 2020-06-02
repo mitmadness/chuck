@@ -1,6 +1,8 @@
 import { IConversionJob } from './job';
 import { IStepModule, IStepsContext } from './steps/step';
-import { processorCleanupErrorEvent, processorStepChangeEvent, processorStepProgressEvent } from './job_events';
+import {
+    processorCleanupErrorEvent, processorProgressEvent, processorStepChangeEvent, processorStepProgressEvent
+} from './job_events';
 
 // -- Job processor --
 // Bull (the tech behind the queue) is given a function to do the actual job when it is added to the queue.
@@ -18,7 +20,6 @@ import { processorCleanupErrorEvent, processorStepChangeEvent, processorStepProg
 //  2. One or more to do the conversion
 //  3. One to upload the result
 
-
 /**
  * The processor is the function that is passed to queue.process().
  * It iterates over conversion steps, handling context and errors (cleanup, etc).
@@ -30,7 +31,12 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
     const cleanup = stepsCleanupProcessor.bind(null, stepsStack, job, context);
 
     //=> Execute all steps in order, sequentially
-    for (const step of steps) {
+    for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+
+        //=> Update progress bars
+        await job.progress(processorProgressEvent((i + 1) / steps.length));
+
         //=> Pass or record passage
         if (!step.shouldProcess(job.data, context)) continue;
         stepsStack.push(step);
@@ -53,6 +59,7 @@ export async function processor(steps: IStepModule[], job: IConversionJob): Prom
             throw err;
         }
     }
+    await job.progress(processorProgressEvent(1));
 
     //=> Perform cleanup
     await cleanup('All steps have terminated successfuly');
