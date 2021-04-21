@@ -29,12 +29,6 @@ const ConversionSchema = new Schema({
         }
     },
 
-    azure: {
-        host: { type: String, required: true },
-        sharedAccessSignatureToken: { type: String, required: true },
-        container : { type: String, required: true }
-    },
-
     compilerOptions: {
         targeting: { type: String, required: true },
         buildOptions: {
@@ -66,10 +60,9 @@ export function safeData({
     assetBundleName,
     assetUrls,
     conversionOptions,
-    azure,
     compilerOptions
 }: IConversion): Partial<IConversion> {
-    return { assetBundleName, assetUrls, conversionOptions, azure, compilerOptions };
+    return { assetBundleName, assetUrls, conversionOptions, compilerOptions };
 }
 
 export const Conversion = mongoose.model<IConversionModel>('Conversion', ConversionSchema);

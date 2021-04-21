@@ -69,13 +69,6 @@ export interface IChuckConfig {
     unityPath: string|undefined;
 
     /**
-     * Azure configuration.
-     *
-     * @default { enableEmu: false }
-     */
-    azure: { enableEmu: boolean; };
-
-    /**
      * An array of module names.
      * Those modules will be loaded dynamically as step plugins.
      */
@@ -110,9 +103,6 @@ const config: IChuckConfig = {
         password: process.env.CHUCK_ADMINWEBUIS_PASSWORD
     },
     unityPath: process.env.CHUCK_UNITYPATH,
-    azure: {
-        enableEmu: process.env.CHUCK_AZURE_ENABLEEMU === 'true'
-    },
     stepModulePlugins: process.env.CHUCK_STEPMODULEPLUGINS ? process.env.CHUCK_STEPMODULEPLUGINS.split(',') : []
 };
 

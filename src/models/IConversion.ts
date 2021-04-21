@@ -24,15 +24,6 @@ export interface IConversion {
     conversionOptions: string[];
 
     /**
-     * Where/how to upload the result
-     */
-    azure: {
-        host: string;
-        sharedAccessSignatureToken: string;
-        container: string;
-    };
-
-    /**
      * How to compile the assetBundle
      */
     compilerOptions: {
