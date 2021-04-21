@@ -13,10 +13,6 @@ export interface IConversion {
      * The expected name of the resulting asset bundle
      */
     assetBundleName: string;
-    /**
-     * The list of files to bundle
-     */
-    assetUrls: string[];
 
     /**
      * A list of options intended for external steps (plugins)

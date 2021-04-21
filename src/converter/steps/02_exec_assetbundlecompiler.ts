@@ -6,15 +6,14 @@ import * as sanitize from 'sanitize-filename';
 import { bundle, setUnityPath } from '@mitm/assetbundlecompiler';
 import config from '../../config';
 import { IConversion } from '../../models/IConversion';
-import { IStepDescription, ProgressFn } from './step';
-import { IDownloadAssetsStepsContext } from './01_download_assets';
+import {IStepDescription, IStepsContext, ProgressFn} from './step';
 
 // -- STEP 02 --
 // This step bundle all the files in the assetsPaths field of the context (the data blob transfered between steps)
 // and bundle it with Unity using the options given by the user.
 // The result is stored in assetBundlePath for upload by STEP 03.
 
-export interface IExecAssetBundleCompilerStepContext extends IDownloadAssetsStepsContext {
+export interface IExecAssetBundleCompilerStepContext extends IStepsContext {
     /**
      * Where is the generated asset? This is used to clean afterwards.
      */

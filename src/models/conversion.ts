@@ -13,14 +13,6 @@ const ConversionSchema = new Schema({
 
     assetBundleName: { type: String, required: true },
 
-    assetUrls: {
-        type: Array,
-        required: true,
-        validate(urls: any[]) {
-            return urls.every(value => typeof value === 'string');
-        }
-    },
-
     conversionOptions: {
         type: Array,
         default: [],
@@ -58,11 +50,10 @@ const ConversionSchema = new Schema({
 
 export function safeData({
     assetBundleName,
-    assetUrls,
     conversionOptions,
     compilerOptions
 }: IConversion): Partial<IConversion> {
-    return { assetBundleName, assetUrls, conversionOptions, compilerOptions };
+    return { assetBundleName, conversionOptions, compilerOptions };
 }
 
 export const Conversion = mongoose.model<IConversionModel>('Conversion', ConversionSchema);
